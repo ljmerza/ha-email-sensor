@@ -11,5 +11,5 @@ sensor:
         name: FedEx
         state_topic: "fedex"
         value_template: '{{ value_json.count }}'
-        json_attributes_topic: "email"
+        json_attributes_topic: "fedex"
 ```
