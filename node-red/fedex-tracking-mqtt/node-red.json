@@ -1,8 +1,8 @@
 [
     {
-        "id": "38c0e831.d05c48",
+        "id": "8ac86949.576f98",
         "type": "inject",
-        "z": "ac868d3f.96843",
+        "z": "947b74a5.58a2b8",
         "name": "",
         "topic": "",
         "payload": "",
@@ -11,18 +11,18 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 150,
-        "y": 60,
+        "x": 130,
+        "y": 160,
         "wires": [
             [
-                "15cc7103.feefcf"
+                "1b8aa3fd.f6274c"
             ]
         ]
     },
     {
-        "id": "15cc7103.feefcf",
+        "id": "1b8aa3fd.f6274c",
         "type": "ha-get-entities",
-        "z": "ac868d3f.96843",
+        "z": "947b74a5.58a2b8",
         "server": "a6bf5b06.8f4708",
         "name": "Email Entity",
         "rules": [
@@ -38,41 +38,41 @@
         "output_location_type": "msg",
         "output_location": "payload",
         "output_results_count": 1,
-        "x": 330,
-        "y": 60,
+        "x": 310,
+        "y": 160,
         "wires": [
             [
-                "9e127d66.9fd32"
+                "929a5608.1f0dc8"
             ]
         ]
     },
     {
-        "id": "9e127d66.9fd32",
+        "id": "929a5608.1f0dc8",
         "type": "function",
-        "z": "ac868d3f.96843",
-        "name": "USPS",
-        "func": "\nconst allEmails = msg.payload.attributes.emails;\nconst uspsEmails = allEmails.filter(e => e.from.includes('USPS'))\nif(uspsEmails.length === 0){\n    msg.payload = {trackingNumbers: [], count: 0};\n    return msg;\n}\n\nconst matchingString = 'nowrap;word-break:normal\">'\nconst regex = new RegExp(matchingString, 'gi');\nconst trackingNumberLength = 22;\n\nlet result;\nconst trackingNumbers = [];\n\nuspsEmails.forEach(email => {\n   while ( (result = regex.exec(email.msg)) ) {\n        const start = result.index + matchingString.length;\n        const end = start + trackingNumberLength;\n        const trackingNumber = email.msg.substring(start, end);\n        if(!trackingNumbers.includes(trackingNumber)){\n            trackingNumbers.push(trackingNumber);\n        }\n    } \n})\n\n\nmsg.payload = {trackingNumbers, count: trackingNumbers.length};\nreturn msg;",
+        "z": "947b74a5.58a2b8",
+        "name": "FedEx",
+        "func": "\nconst allEmails = msg.payload.attributes.emails;\n\nconst fedexEmails = allEmails.filter(e => e.from === 'TrackingUpdates@fedex.com')\nif(fedexEmails.length === 0){\n    msg.payload = {trackingNumbers: [], count: 0};\n    return msg;\n}\n\nconst matchingString = 'tracknumbers='\nconst regex = new RegExp(matchingString, 'gi');\nconst trackingNumberLength = 12;\n\nlet result;\nconst trackingNumbers = [];\n\nfedexEmails.forEach(email => {\n   while ( (result = regex.exec(email.msg)) ) {\n        const start = result.index + matchingString.length;\n        const end = start + trackingNumberLength;\n        const trackingNumber = email.msg.substring(start, end);\n        if(!trackingNumbers.includes(trackingNumber)){\n            trackingNumbers.push(trackingNumber);\n        }\n    } \n})\n\n\nmsg.payload = {trackingNumbers, count: trackingNumbers.length};\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 510,
-        "y": 60,
+        "x": 490,
+        "y": 160,
         "wires": [
             [
-                "41edc195.2522b"
+                "da009c8a.b8de7"
             ]
         ]
     },
     {
-        "id": "41edc195.2522b",
+        "id": "da009c8a.b8de7",
         "type": "mqtt out",
-        "z": "ac868d3f.96843",
-        "name": "MQTT Email",
-        "topic": "email",
+        "z": "947b74a5.58a2b8",
+        "name": "MQTT FedEx",
+        "topic": "fedex",
         "qos": "",
         "retain": "",
         "broker": "87bba2bf.60ac7",
-        "x": 670,
-        "y": 60,
+        "x": 680,
+        "y": 160,
         "wires": []
     },
     {
