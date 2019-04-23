@@ -38,9 +38,9 @@ Enjoy my card? Help me out for a couple of :beers: or a :coffee:!
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/JMISm06AD)
 
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/ljmerza/hass-email-sensor.svg?style=for-the-badge
-[commits]: https://github.com/ljmerza/hass-email-sensor/commits/master
-[license-shield]: https://img.shields.io/github/license/ljmerza/hass-email-sensor.svg?style=for-the-badge
+[commits-shield]: https://img.shields.io/github/commit-activity/y/ljmerza/ha-email-sensor.svg?style=for-the-badge
+[commits]: https://github.com/ljmerza/ha-email-sensor/commits/master
+[license-shield]: https://img.shields.io/github/license/ljmerza/ha-email-sensor.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Leonardo%20Merza%20%40ljmerza-blue.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/ljmerza/hass-email-sensor.svg?style=for-the-badge
-[releases]: https://github.com/ljmerza/hass-email-sensor/releases
+[releases-shield]: https://img.shields.io/github/release/ljmerza/ha-email-sensor.svg?style=for-the-badge
+[releases]: https://github.com/ljmerza/ha-email-sensor/releases
