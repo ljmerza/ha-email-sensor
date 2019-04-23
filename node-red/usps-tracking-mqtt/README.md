@@ -8,7 +8,7 @@ This flow parses out tracking numbers from USPS emails and sends them back to Ho
 ```yaml
 sensor:
     - platform: mqtt
-        name: Email
+        name: USPS
         state_topic: "usps"
         value_template: '{{ value_json.count }}'
         json_attributes_topic: "email"
