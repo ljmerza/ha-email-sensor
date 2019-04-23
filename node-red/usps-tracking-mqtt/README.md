@@ -3,7 +3,7 @@
 
 ## Description
 
-This flow parsea out tracking numbers from USPS emails and sends them back to Home Assistant via MQTT. Add the flow to Node-RED and add the MQTT sensor in Home assistant:
+This flow parses out tracking numbers from USPS emails and sends them back to Home Assistant via MQTT. Add the flow to Node-RED and add the MQTT sensor in Home assistant:
 
 ```yaml
 sensor:
