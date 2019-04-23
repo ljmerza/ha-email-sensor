@@ -67,7 +67,7 @@
         "type": "mqtt out",
         "z": "ac868d3f.96843",
         "name": "MQTT Email",
-        "topic": "email",
+        "topic": "usps",
         "qos": "",
         "retain": "",
         "broker": "87bba2bf.60ac7",
