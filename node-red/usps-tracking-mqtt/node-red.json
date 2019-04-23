@@ -1,0 +1,118 @@
+[
+    {
+        "id": "947b74a5.58a2b8",
+        "type": "tab",
+        "label": "",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "360e22ee.e6a1fe",
+        "type": "inject",
+        "z": "947b74a5.58a2b8",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "4",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 40,
+        "wires": [
+            [
+                "24e88ab.1530776"
+            ]
+        ]
+    },
+    {
+        "id": "24e88ab.1530776",
+        "type": "ha-get-entities",
+        "z": "947b74a5.58a2b8",
+        "server": "a6bf5b06.8f4708",
+        "name": "Email Entity",
+        "rules": [
+            {
+                "property": "entity_id",
+                "logic": "starts_with",
+                "value": "sensor.email_",
+                "valueType": "str"
+            }
+        ],
+        "output_type": "random",
+        "output_empty_results": false,
+        "output_location_type": "msg",
+        "output_location": "payload",
+        "output_results_count": 1,
+        "x": 290,
+        "y": 40,
+        "wires": [
+            [
+                "81ad08d5.e4fa68"
+            ]
+        ]
+    },
+    {
+        "id": "81ad08d5.e4fa68",
+        "type": "function",
+        "z": "947b74a5.58a2b8",
+        "name": "USPS",
+        "func": "\nconst allEmails = msg.payload.attributes.emails;\nconst uspsEmails = allEmails.filter(e => e.from.includes('USPS'))\nif(uspsEmails.length === 0){\n    msg.payload = {trackingNumbers: [], count: 0};\n    return msg;\n}\n\nconst matchingString = 'nowrap;word-break:normal\">'\nconst regex = new RegExp(matchingString, 'gi');\nconst trackingNumberLength = 22;\n\nlet result;\nconst trackingNumbers = [];\n\nuspsEmails.forEach(email => {\n   while ( (result = regex.exec(email.msg)) ) {\n        const start = result.index + matchingString.length;\n        const end = start + trackingNumberLength;\n        const trackingNumber = email.msg.substring(start, end);\n        trackingNumbers.push(trackingNumber);\n    } \n})\n\n\nmsg.payload = {trackingNumbers, count: trackingNumbers.length};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 40,
+        "wires": [
+            [
+                "472d6b6b.e92b54"
+            ]
+        ]
+    },
+    {
+        "id": "472d6b6b.e92b54",
+        "type": "mqtt out",
+        "z": "947b74a5.58a2b8",
+        "name": "MQTT Email",
+        "topic": "email",
+        "qos": "",
+        "retain": "",
+        "broker": "87bba2bf.60ac7",
+        "x": 630,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "a6bf5b06.8f4708",
+        "type": "server",
+        "z": "",
+        "name": "Home Assistant",
+        "legacy": false,
+        "hassio": false,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true
+    },
+    {
+        "id": "87bba2bf.60ac7",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
