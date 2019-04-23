@@ -1,7 +1,5 @@
 # Home Assistant Email Sensor
 
----
-
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE.md)
 
