@@ -1,0 +1,111 @@
+[
+    {
+        "id": "e7efd2c9.5776b",
+        "type": "inject",
+        "z": "ac868d3f.96843",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "4",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 70,
+        "y": 480,
+        "wires": [
+            [
+                "b6a6271d.c8a458"
+            ]
+        ]
+    },
+    {
+        "id": "b6a6271d.c8a458",
+        "type": "ha-get-entities",
+        "z": "ac868d3f.96843",
+        "server": "a6bf5b06.8f4708",
+        "name": "Email Entity",
+        "rules": [
+            {
+                "property": "entity_id",
+                "logic": "starts_with",
+                "value": "sensor.email_",
+                "valueType": "str"
+            }
+        ],
+        "output_type": "random",
+        "output_empty_results": false,
+        "output_location_type": "msg",
+        "output_location": "payload",
+        "output_results_count": 1,
+        "x": 250,
+        "y": 480,
+        "wires": [
+            [
+                "2ce4d8fc.2d2668"
+            ]
+        ]
+    },
+    {
+        "id": "2ce4d8fc.2d2668",
+        "type": "function",
+        "z": "ac868d3f.96843",
+        "name": "UPS",
+        "func": "\nconst allEmails = msg.payload.attributes.emails;\n\nconst upsEmails = allEmails.filter(e => e.from.includes('pkginfo@ups.com'))\nif(upsEmails.length === 0){\n    msg.payload = {trackingNumbers: [], count: 0};\n    return msg;\n}\n\nconst trackingNumbers = [];\n\nupsEmails.forEach(email => {\n    const subjects = email.subject.split(' ')\n    const trackingNumber = subjects[subjects.length-1].trim();\n   \n    if(!trackingNumbers.includes(trackingNumber)){\n        trackingNumbers.push(trackingNumber);\n    }\n})\n\n\nmsg.payload = {trackingNumbers, count: trackingNumbers.length};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 430,
+        "y": 480,
+        "wires": [
+            [
+                "8b3bfa23.6755d8"
+            ]
+        ]
+    },
+    {
+        "id": "8b3bfa23.6755d8",
+        "type": "mqtt out",
+        "z": "ac868d3f.96843",
+        "name": "MQTT UPS",
+        "topic": "ups",
+        "qos": "",
+        "retain": "",
+        "broker": "87bba2bf.60ac7",
+        "x": 610,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "a6bf5b06.8f4708",
+        "type": "server",
+        "z": "",
+        "name": "Home Assistant",
+        "legacy": false,
+        "hassio": false,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true
+    },
+    {
+        "id": "87bba2bf.60ac7",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
