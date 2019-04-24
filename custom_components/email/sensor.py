@@ -30,7 +30,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL_FOLDER, default='INBOX'): cv.string,
 })
 
-SCAN_INTERVAL = timedelta(minutes=3)
+SCAN_INTERVAL = timedelta(seconds=300)
 
 
 def setup_platform(hass, config, add_entities, discovery_info=None):

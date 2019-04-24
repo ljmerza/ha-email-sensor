@@ -1,8 +1,8 @@
 [
     {
-        "id": "8ac86949.576f98",
+        "id": "862196b4.3669b8",
         "type": "inject",
-        "z": "947b74a5.58a2b8",
+        "z": "ac868d3f.96843",
         "name": "",
         "topic": "",
         "payload": "",
@@ -15,14 +15,14 @@
         "y": 160,
         "wires": [
             [
-                "1b8aa3fd.f6274c"
+                "1e2fb3b4.a8deec"
             ]
         ]
     },
     {
-        "id": "1b8aa3fd.f6274c",
+        "id": "1e2fb3b4.a8deec",
         "type": "ha-get-entities",
-        "z": "947b74a5.58a2b8",
+        "z": "ac868d3f.96843",
         "server": "a6bf5b06.8f4708",
         "name": "Email Entity",
         "rules": [
@@ -42,30 +42,30 @@
         "y": 160,
         "wires": [
             [
-                "929a5608.1f0dc8"
+                "45305dbb.373914"
             ]
         ]
     },
     {
-        "id": "929a5608.1f0dc8",
+        "id": "45305dbb.373914",
         "type": "function",
-        "z": "947b74a5.58a2b8",
+        "z": "ac868d3f.96843",
         "name": "FedEx",
-        "func": "\nconst allEmails = msg.payload.attributes.emails;\n\nconst fedexEmails = allEmails.filter(e => e.from === 'TrackingUpdates@fedex.com')\nif(fedexEmails.length === 0){\n    msg.payload = {trackingNumbers: [], count: 0};\n    return msg;\n}\n\nconst matchingString = 'tracknumbers='\nconst regex = new RegExp(matchingString, 'gi');\nconst trackingNumberLength = 12;\n\nlet result;\nconst trackingNumbers = [];\n\nfedexEmails.forEach(email => {\n   while ( (result = regex.exec(email.msg)) ) {\n        const start = result.index + matchingString.length;\n        const end = start + trackingNumberLength;\n        const trackingNumber = email.msg.substring(start, end);\n        if(!trackingNumbers.includes(trackingNumber)){\n            trackingNumbers.push(trackingNumber);\n        }\n    } \n})\n\n\nmsg.payload = {trackingNumbers, count: trackingNumbers.length};\nreturn msg;",
+        "func": "\nconst allEmails = msg.payload.attributes.emails;\n\nconst matchingEmails = allEmails.filter(e => e.from.includes('TrackingUpdates@fedex.com'))\nif(matchingEmails.length === 0){\n    msg.payload = {trackingNumbers: [], count: 0};\n    return msg;\n}\n\nconst matchingString = 'tracknumbers='\nconst regex = new RegExp(matchingString, 'gi');\nconst trackingNumberLength = 12;\n\nlet result;\nconst trackingNumbers = [];\n\nmatchingEmails.forEach(email => {\n   while ( (result = regex.exec(email.msg)) ) {\n        const start = result.index + matchingString.length;\n        const end = start + trackingNumberLength;\n        const trackingNumber = email.msg.substring(start, end);\n        if(!trackingNumbers.includes(trackingNumber)){\n            trackingNumbers.push(trackingNumber);\n        }\n    } \n});\n\n\nmsg.payload = {trackingNumbers, count: trackingNumbers.length};\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 490,
         "y": 160,
         "wires": [
             [
-                "da009c8a.b8de7"
+                "5d7f1e0d.643c1"
             ]
         ]
     },
     {
-        "id": "da009c8a.b8de7",
+        "id": "5d7f1e0d.643c1",
         "type": "mqtt out",
-        "z": "947b74a5.58a2b8",
+        "z": "ac868d3f.96843",
         "name": "MQTT FedEx",
         "topic": "fedex",
         "qos": "",
