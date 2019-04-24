@@ -82,7 +82,7 @@ class EmailEntity(Entity):
                             'msg': msg
                         })
                     except Exception as err:
-                        LOGGER.error(f'IMAPClient get_payload error: {err}')
+                        _LOGGER.error(f'IMAPClient get_payload error: {err}')
                 except Exception as err:
                     _LOGGER.error(f'IMAPClient message_from_bytes error: {err}')
 
