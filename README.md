@@ -8,7 +8,7 @@
 
 ## Installation
 
-Add the `sensor.py` file to an `email` folder in your `custom_components` folder.
+Add the `email` folder in your `custom_components` folder.
 
 ## Options
 
