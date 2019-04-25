@@ -20,7 +20,7 @@ from .parsers.usps import parse_usps, ATTR_USPS
 from .parsers.ali_express import parse_ali_express, ATTR_ALI_EXPRESS
 from .parsers.newegg import parse_newegg, ATTR_NEWEGG
 from .parsers.rockauto import parse_rockauto, ATTR_ROCKAUTO
-
+from .parsers.bh_photo import ATTR_BH_PHOTO, parse_bh_photo
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -103,6 +103,7 @@ class EmailEntity(Entity):
             self._attr[ATTR_ALI_EXPRESS] = parse_ali_express(emails)
             self._attr[ATTR_NEWEGG] = parse_newegg(emails)
             self._attr[ATTR_ROCKAUTO] = parse_rockauto(emails)
+            self._attr[ATTR_BH_PHOTO] = parse_bh_photo(emails)
         except Exception as err:
             _LOGGER.error(f'Parsers error: {err}')
 

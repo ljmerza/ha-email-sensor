@@ -1,6 +1,6 @@
 # Home Assistant Email Sensor
 
-Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS, Rockauto, Newegg, and Ali Express.
+Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS, Rockauto, Newegg, B&H Photo, and Ali Express.
 
 ---
 
