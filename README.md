@@ -1,5 +1,9 @@
 # Home Assistant Email Sensor
 
+Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS, and Ali Express.
+
+---
+
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE.md)
 
@@ -17,7 +21,7 @@ Add the `email` folder in your `custom_components` folder.
 | email | string | **Required** | email address
 | password | string | **Required** | email password
 | smtp_server | string | **Optional** | `imap.gmail.com`  SMTP server address>
-| smpt_port | number | **Optional** | `993` SMTP port
+| smtp_port | number | **Optional** | `993` SMTP port
 | folder | string | **Optional** | `INBOX` Which folder to pull emails from
 
 ```yaml
@@ -27,9 +31,6 @@ sensor:
     password: !secret my_google_app_password
 ```
 
-## Node-RED
-
-`node-red` folder contains Node-RED flows for parsing emails from this email sensor such as parsing tracking numbers from USPS emails. Users can contribute or update flows via pull requests. Each flow has it's own folder with the flow JSON file and a README describing what it does and any `yaml` needed for home assistant.
 
 ---
 

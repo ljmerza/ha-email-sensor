@@ -1,7 +1,7 @@
 {
     "ha-email-sensor": {
-        "updated_at": "2019-04-23",
-        "version": "1.0.0",
+        "updated_at": "2019-04-24",
+        "version": "1.1.0",
         "remote_location": "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/sensor.py",
         "visit_repo": "https://github.com/ljmerza/ha-email-sensor",
         "changelog": "https://github.com/ljmerza/ha-email-sensor/releases/latest"

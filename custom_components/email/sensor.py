@@ -1,26 +1,29 @@
 """Support for Google - Calendar Event Devices."""
 from datetime import timedelta
-import imaplib
-import email
 import logging
 
 import voluptuous as vol
 
-from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
+from .const import (
+    CONF_EMAIL, CONF_PASSWORD, CONFIG_SEARCH,
+    CONF_SMTP_SERVER, CONF_SMTP_PORT, CONF_EMAIL_FOLDER,
+    ATTR_EMAILS, ATTR_COUNT, 
+    ATTR_UPS, ATTR_FEDEX, ATTR_USPS, ATTR_ALI_EXPRESS,
+    EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, EMAIL_ATTR_BODY
+)
+from .parsers.ups import parse_ups
+from .parsers.fedex import parse_fedex
+from .parsers.usps import parse_usps
+from .parsers.ali_express import parse_ali_express
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'email'
-
-CONF_SMTP_SERVER = 'smtp_server'
-CONF_SMTP_PORT = 'smpt_port'
-CONF_EMAIL_FOLDER = 'folder'
-
-SCAN_INTERVAL = timedelta(seconds=300)
+SCAN_INTERVAL = timedelta(seconds=30)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
@@ -61,35 +64,43 @@ class EmailEntity(Entity):
         """Init the Email Entity."""
         self.server = server
         self.email_address = config[CONF_EMAIL]
-
-        self.emails = []
-        self.email_count = 0
+        self._attr = {}
 
     def update(self):
         """Update data from Email API."""
-        self.emails = []
-        
+        import mailparser
+        self._attr = {ATTR_EMAILS: []}
+        emails = []
+
         try: 
             messages = self.server.search('UNSEEN')
             for uid, message_data in self.server.fetch(messages, 'RFC822').items():
                 try:
-                    email_message = email.message_from_bytes(message_data[b'RFC822'])
-                    try:
-                        msg = str(email_message.get_payload(0))
-                        self.emails.append({
-                            'from': email_message.get('from'),
-                            'subject': email_message.get('subject'),
-                            'msg': msg
-                        })
-                    except Exception as err:
-                        _LOGGER.error(f'IMAPClient get_payload error: {err}')
+                    mail = mailparser.parse_from_bytes(message_data[b'RFC822'])
+                    emails.append({
+                        EMAIL_ATTR_FROM: mail.from_,
+                        EMAIL_ATTR_SUBJECT: mail.subject,
+                        EMAIL_ATTR_BODY: mail.body
+                    })
+                    self._attr[ATTR_EMAILS].append({
+                        EMAIL_ATTR_FROM: mail.from_,
+                        EMAIL_ATTR_SUBJECT: mail.subject,
+                    })
                 except Exception as err:
-                    _LOGGER.error(f'IMAPClient message_from_bytes error: {err}')
+                    _LOGGER.error(f'mailparser parse_from_bytes error: {err}')
 
         except Exception as err:
             _LOGGER.error(f'IMAPClient update error: {err}')
 
-        self.email_count = len(self.emails)
+        self._attr[ATTR_COUNT] = len(emails)
+
+        try:
+            self._attr[ATTR_UPS] = parse_ups(emails)
+            self._attr[ATTR_FEDEX] = parse_fedex(emails)
+            self._attr[ATTR_USPS] = parse_usps(emails)
+            self._attr[ATTR_ALI_EXPRESS] = parse_ali_express(emails)
+        except Exception as err:
+            _LOGGER.error(f'Parsers error: {err}')
 
     @property
     def name(self):
@@ -99,15 +110,12 @@ class EmailEntity(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self.email_count
+        return self._attr.get('count', 0)
 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        return {
-            'emails': self.emails,
-            'count': self.email_count
-        }
+        return self._attr
 
     @property
     def icon(self):
