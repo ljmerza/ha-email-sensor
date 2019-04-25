@@ -11,8 +11,8 @@ from homeassistant.helpers.entity import Entity
 from .const import (
     CONF_EMAIL, CONF_PASSWORD, CONFIG_SEARCH, CONF_SMTP_SERVER, 
     CONF_SMTP_PORT, CONF_EMAIL_FOLDER, ATTR_EMAILS, ATTR_COUNT, 
-    EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, EMAIL_ATTR_BODY
-)
+    ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, 
+    EMAIL_ATTR_BODY)
 
 from .parsers.ups import parse_ups, ATTR_UPS
 from .parsers.fedex import parse_fedex, ATTR_FEDEX
@@ -21,6 +21,7 @@ from .parsers.ali_express import parse_ali_express, ATTR_ALI_EXPRESS
 from .parsers.newegg import parse_newegg, ATTR_NEWEGG
 from .parsers.rockauto import parse_rockauto, ATTR_ROCKAUTO
 from .parsers.bh_photo import ATTR_BH_PHOTO, parse_bh_photo
+from .parsers.paypal import ATTR_PAYPAL, parse_paypal
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,12 +67,15 @@ class EmailEntity(Entity):
         """Init the Email Entity."""
         self.server = server
         self.email_address = config[CONF_EMAIL]
-        self._attr = {}
+        self._attr = None
 
     def update(self):
         """Update data from Email API."""
         import mailparser
-        self._attr = {ATTR_EMAILS: []}
+        self._attr = {
+            ATTR_EMAILS: [], 
+            ATTR_TRACKING_NUMBERS: {}
+        }
         emails = []
 
         try: 
@@ -97,13 +101,14 @@ class EmailEntity(Entity):
         self._attr[ATTR_COUNT] = len(emails)
 
         try:
-            self._attr[ATTR_UPS] = parse_ups(emails)
-            self._attr[ATTR_FEDEX] = parse_fedex(emails)
-            self._attr[ATTR_USPS] = parse_usps(emails)
-            self._attr[ATTR_ALI_EXPRESS] = parse_ali_express(emails)
-            self._attr[ATTR_NEWEGG] = parse_newegg(emails)
-            self._attr[ATTR_ROCKAUTO] = parse_rockauto(emails)
-            self._attr[ATTR_BH_PHOTO] = parse_bh_photo(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_UPS] = parse_ups(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_FEDEX] = parse_fedex(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_USPS] = parse_usps(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_ALI_EXPRESS] = parse_ali_express(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_NEWEGG] = parse_newegg(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_ROCKAUTO] = parse_rockauto(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_BH_PHOTO] = parse_bh_photo(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_PAYPAL] = parse_paypal(emails)
         except Exception as err:
             _LOGGER.error(f'Parsers error: {err}')
 

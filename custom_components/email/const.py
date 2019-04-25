@@ -11,6 +11,7 @@ CONFIG_SEARCH = 'UNSEEN'
 
 ATTR_COUNT = 'count'
 ATTR_EMAILS = 'emails'
+ATTR_TRACKING_NUMBERS = 'tracking_numbers'
 
 EMAIL_ATTR_FROM = 'from'
 EMAIL_ATTR_SUBJECT = 'subject'
