@@ -5,7 +5,7 @@ from ..const import EMAIL_ATTR_FROM, EMAIL_ATTR_BODY
 
 
 _LOGGER = logging.getLogger(__name__)
-EMAIL_ADDRESS = 'michael.leal82@gmail.com'
+EMAIL_ADDRESS = 'ebay@ebay.com'
 ATTR_EBAY = 'ebay'
 
 
