@@ -15,9 +15,3 @@ ATTR_EMAILS = 'emails'
 EMAIL_ATTR_FROM = 'from'
 EMAIL_ATTR_SUBJECT = 'subject'
 EMAIL_ATTR_BODY = 'body'
-
-ATTR_UPS = 'ups'
-ATTR_FEDEX = 'fedex'
-ATTR_USPS = 'usps'
-ATTR_ALI_EXPRESS = 'ali_express'
-

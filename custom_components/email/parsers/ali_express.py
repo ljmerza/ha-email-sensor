@@ -7,6 +7,7 @@ from ..const import EMAIL_ATTR_FROM, EMAIL_ATTR_BODY
 
 _LOGGER = logging.getLogger(__name__)
 EMAIL_ADDRESS = 'transaction@notice.aliexpress.com'
+ATTR_ALI_EXPRESS = 'ali_express'
 
 
 def parse_ali_express(emails):

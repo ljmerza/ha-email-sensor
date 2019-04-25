@@ -6,12 +6,12 @@ from ..const import EMAIL_ATTR_FROM, EMAIL_ATTR_BODY
 
 
 _LOGGER = logging.getLogger(__name__)
-EMAIL_ADDRESS = 'pkginfo@ups.com'
-ATTR_UPS = 'ups'
+EMAIL_ADDRESS = 'info@newegg.com'
+ATTR_NEWEGG = 'newegg'
 
 
-def parse_ups(emails):
-    """Parse UPS tracking numbers."""
+def parse_newegg(emails):
+    """Parse Newegg tracking numbers."""
     tracking_numbers = []
 
     for email in emails:
@@ -25,7 +25,7 @@ def parse_ups(emails):
             links = [link.get('href') for link in soup.find_all('a')]
             for link in links:
                 if not link: continue
-                match = re.search('tracknum=(.*?)&AgreeToTermsAndConditions', link)
+                match = re.search('TrackingNumber=(.*?)&type=0', link)
                 if match and match.group(1) not in tracking_numbers:
                     tracking_numbers.append(match.group(1))
                 

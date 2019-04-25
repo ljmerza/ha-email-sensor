@@ -7,6 +7,7 @@ from ..const import EMAIL_ATTR_FROM, EMAIL_ATTR_BODY
 
 _LOGGER = logging.getLogger(__name__)
 EMAIL_ADDRESS = 'TrackingUpdates@fedex.com'
+ATTR_FEDEX = 'fedex'
 
 
 def parse_fedex(emails):

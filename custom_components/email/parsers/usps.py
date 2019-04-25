@@ -7,7 +7,7 @@ from ..const import EMAIL_ATTR_FROM, EMAIL_ATTR_BODY
 
 _LOGGER = logging.getLogger(__name__)
 EMAIL_ADDRESS = 'USPSInformedDelivery@usps.gov'
-
+ATTR_USPS = 'usps'
 
 def parse_usps(emails):
     """Parse USPS tracking numbers."""

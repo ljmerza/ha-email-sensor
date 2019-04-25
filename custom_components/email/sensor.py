@@ -9,16 +9,18 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
 from .const import (
-    CONF_EMAIL, CONF_PASSWORD, CONFIG_SEARCH,
-    CONF_SMTP_SERVER, CONF_SMTP_PORT, CONF_EMAIL_FOLDER,
-    ATTR_EMAILS, ATTR_COUNT, 
-    ATTR_UPS, ATTR_FEDEX, ATTR_USPS, ATTR_ALI_EXPRESS,
+    CONF_EMAIL, CONF_PASSWORD, CONFIG_SEARCH, CONF_SMTP_SERVER, 
+    CONF_SMTP_PORT, CONF_EMAIL_FOLDER, ATTR_EMAILS, ATTR_COUNT, 
     EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, EMAIL_ATTR_BODY
 )
-from .parsers.ups import parse_ups
-from .parsers.fedex import parse_fedex
-from .parsers.usps import parse_usps
-from .parsers.ali_express import parse_ali_express
+
+from .parsers.ups import parse_ups, ATTR_UPS
+from .parsers.fedex import parse_fedex, ATTR_FEDEX
+from .parsers.usps import parse_usps, ATTR_USPS
+from .parsers.ali_express import parse_ali_express, ATTR_ALI_EXPRESS
+from .parsers.newegg import parse_newegg, ATTR_NEWEGG
+from .parsers.rockauto import parse_rockauto, ATTR_ROCKAUTO
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -99,6 +101,8 @@ class EmailEntity(Entity):
             self._attr[ATTR_FEDEX] = parse_fedex(emails)
             self._attr[ATTR_USPS] = parse_usps(emails)
             self._attr[ATTR_ALI_EXPRESS] = parse_ali_express(emails)
+            self._attr[ATTR_NEWEGG] = parse_newegg(emails)
+            self._attr[ATTR_ROCKAUTO] = parse_rockauto(emails)
         except Exception as err:
             _LOGGER.error(f'Parsers error: {err}')
 
