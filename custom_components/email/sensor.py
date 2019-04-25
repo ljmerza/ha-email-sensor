@@ -14,14 +14,15 @@ from .const import (
     ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, 
     EMAIL_ATTR_BODY)
 
-from .parsers.ups import parse_ups, ATTR_UPS
-from .parsers.fedex import parse_fedex, ATTR_FEDEX
-from .parsers.usps import parse_usps, ATTR_USPS
-from .parsers.ali_express import parse_ali_express, ATTR_ALI_EXPRESS
-from .parsers.newegg import parse_newegg, ATTR_NEWEGG
-from .parsers.rockauto import parse_rockauto, ATTR_ROCKAUTO
+from .parsers.ups import ATTR_UPS, parse_ups
+from .parsers.fedex import ATTR_FEDEX, parse_fedex
+from .parsers.usps import ATTR_USPS, parse_usps
+from .parsers.ali_express import ATTR_ALI_EXPRESS, parse_ali_express
+from .parsers.newegg import ATTR_NEWEGG, parse_newegg
+from .parsers.rockauto import ATTR_ROCKAUTO, parse_rockauto
 from .parsers.bh_photo import ATTR_BH_PHOTO, parse_bh_photo
 from .parsers.paypal import ATTR_PAYPAL, parse_paypal
+from .parsers.ebay import ATTR_EBAY, parse_ebay
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -109,6 +110,7 @@ class EmailEntity(Entity):
             self._attr[ATTR_TRACKING_NUMBERS][ATTR_ROCKAUTO] = parse_rockauto(emails)
             self._attr[ATTR_TRACKING_NUMBERS][ATTR_BH_PHOTO] = parse_bh_photo(emails)
             self._attr[ATTR_TRACKING_NUMBERS][ATTR_PAYPAL] = parse_paypal(emails)
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR_EBAY] = parse_ebay(emails)
         except Exception as err:
             _LOGGER.error(f'Parsers error: {err}')
 
