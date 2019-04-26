@@ -57,7 +57,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         return True
 
     except Exception as err:
-        _LOGGER.error(f'IMAPClient setup_platform error: {err}')
+        _LOGGER.error('IMAPClient setup_platform error {}'.format(err))
         return False
 
 
@@ -94,10 +94,10 @@ class EmailEntity(Entity):
                         EMAIL_ATTR_SUBJECT: mail.subject,
                     })
                 except Exception as err:
-                    _LOGGER.error(f'mailparser parse_from_bytes error: {err}')
+                    _LOGGER.error('mailparser parse_from_bytes error: {}'.format(err))
 
         except Exception as err:
-            _LOGGER.error(f'IMAPClient update error: {err}')
+            _LOGGER.error('IMAPClient update error: {}'.format(err))
 
         self._attr[ATTR_COUNT] = len(emails)
 
@@ -112,7 +112,7 @@ class EmailEntity(Entity):
             self._attr[ATTR_TRACKING_NUMBERS][ATTR_PAYPAL] = parse_paypal(emails)
             self._attr[ATTR_TRACKING_NUMBERS][ATTR_EBAY] = parse_ebay(emails)
         except Exception as err:
-            _LOGGER.error(f'Parsers error: {err}')
+            _LOGGER.error('Parsers error: {}'.format(err))
 
     @property
     def name(self):
