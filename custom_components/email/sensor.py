@@ -117,7 +117,7 @@ class EmailEntity(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f'email_{self.email_address}'
+        return 'email_{}'.format(self.email_address)
 
     @property
     def state(self):
