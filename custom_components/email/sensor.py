@@ -2,6 +2,8 @@
 from datetime import timedelta
 import logging
 
+from imapclient import IMAPClient
+from mailparser import parse_from_bytes
 import voluptuous as vol
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
@@ -58,9 +60,6 @@ class EmailEntity(Entity):
 
     def update(self):
         """Update data from Email API."""
-        import mailparser
-        from imapclient import IMAPClient
-
         self._attr = {
             ATTR_EMAILS: [], 
             ATTR_TRACKING_NUMBERS: {}
@@ -79,7 +78,7 @@ class EmailEntity(Entity):
             messages = server.search('UNSEEN')
             for uid, message_data in server.fetch(messages, 'RFC822').items():
                 try:
-                    mail = mailparser.parse_from_bytes(message_data[b'RFC822'])
+                    mail = parse_from_bytes(message_data[b'RFC822'])
                     emails.append({
                         EMAIL_ATTR_FROM: mail.from_,
                         EMAIL_ATTR_SUBJECT: mail.subject,
