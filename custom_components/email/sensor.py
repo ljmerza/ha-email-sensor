@@ -40,48 +40,44 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Email platform."""
-    from imapclient import IMAPClient
-    
-    smtp_server = config[CONF_SMTP_SERVER]
-    smtp_port = config[CONF_SMTP_PORT]
-
-    email_address = config[CONF_EMAIL]
-    password = config[CONF_PASSWORD]
-    email_folder = config[CONF_EMAIL_FOLDER]
-
-    try:
-        server = IMAPClient(smtp_server, use_uid=True)
-        server.login(email_address, password)
-        select_info = server.select_folder(email_folder, readonly=True)
-        add_entities([EmailEntity(server, config)], True)
-        return True
-
-    except Exception as err:
-        _LOGGER.error('IMAPClient setup_platform error {}'.format(err))
-        return False
+    add_entities([EmailEntity(config)], True)
 
 
 class EmailEntity(Entity):
     """Email Entity."""
 
-    def __init__(self, server, config):
+    def __init__(self, config):
         """Init the Email Entity."""
-        self.server = server
-        self.email_address = config[CONF_EMAIL]
         self._attr = None
+
+        self.smtp_server = config[CONF_SMTP_SERVER]
+        self.smtp_port = config[CONF_SMTP_PORT]
+        self.email_address = config[CONF_EMAIL]
+        self.password = config[CONF_PASSWORD]
+        self.email_folder = config[CONF_EMAIL_FOLDER]
 
     def update(self):
         """Update data from Email API."""
         import mailparser
+        from imapclient import IMAPClient
+
         self._attr = {
             ATTR_EMAILS: [], 
             ATTR_TRACKING_NUMBERS: {}
         }
         emails = []
+        server = IMAPClient(self.smtp_server, use_uid=True)
+
+        try:
+            server.login(self.email_address, self.password)
+            server.select_folder(self.email_folder, readonly=True)
+        except Exception as err:
+            _LOGGER.error('IMAPClient login error {}'.format(err))
+            return False
 
         try: 
-            messages = self.server.search('UNSEEN')
-            for uid, message_data in self.server.fetch(messages, 'RFC822').items():
+            messages = server.search('UNSEEN')
+            for uid, message_data in server.fetch(messages, 'RFC822').items():
                 try:
                     mail = mailparser.parse_from_bytes(message_data[b'RFC822'])
                     emails.append({
@@ -113,6 +109,8 @@ class EmailEntity(Entity):
             self._attr[ATTR_TRACKING_NUMBERS][ATTR_EBAY] = parse_ebay(emails)
         except Exception as err:
             _LOGGER.error('Parsers error: {}'.format(err))
+
+        server.logout()
 
     @property
     def name(self):
