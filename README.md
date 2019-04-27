@@ -30,7 +30,7 @@ Add the `email` folder in your `custom_components` folder.
 sensor:
   - platform: email
     email: !secret my_email
-    password: !secret my_google_app_password
+    password: !secret my_email_password
 ```
 
 
