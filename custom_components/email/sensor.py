@@ -11,7 +11,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
 from .const import (
-    CONF_EMAIL, CONF_PASSWORD, CONFIG_SEARCH, CONF_SMTP_SERVER, 
+    CONF_EMAIL, CONF_PASSWORD, CONF_SHOW_ALL, CONF_SMTP_SERVER, 
     CONF_SMTP_PORT, CONF_EMAIL_FOLDER, ATTR_EMAILS, ATTR_COUNT, 
     ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, 
     EMAIL_ATTR_BODY)
@@ -36,6 +36,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_SMTP_SERVER, default='imap.gmail.com'): cv.string,
     vol.Required(CONF_SMTP_PORT, default=993): cv.positive_int,
     vol.Required(CONF_EMAIL_FOLDER, default='INBOX'): cv.string,
+    vol.Required(CONF_SHOW_ALL, default=False): cv.boolean,
 })
 
 
@@ -57,6 +58,8 @@ class EmailEntity(Entity):
         self.password = config[CONF_PASSWORD]
         self.email_folder = config[CONF_EMAIL_FOLDER]
 
+        self.flag = 'ALL' if config[CONF_SHOW_ALL] else 'UNSEEN'
+
     def update(self):
         """Update data from Email API."""
         self._attr = {
@@ -74,7 +77,7 @@ class EmailEntity(Entity):
             return False
 
         try: 
-            messages = server.search('ALL')
+            messages = server.search(self.flag)
             for uid, message_data in server.fetch(messages, 'RFC822').items():
                 try:
                     mail = parse_from_bytes(message_data[b'RFC822'])
