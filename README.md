@@ -14,7 +14,9 @@ Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS,
 
 ## Installation
 
-Add the `email` folder in your `custom_components` folder. If the component doesn't load this might be due to Home Assistant not installing the requirements automatically through the manifests file. You can install them manaually by running `pip install beautifulsoup4==4.7.1 imapclient==2.1.0 mail-parser==3.9.3`.
+* Add the `email` folder in your `custom_components` folder
+* If the component doesn't load this might be due to Home Assistant not installing the requirements automatically through the manifests file. You can install them manaually by running `pip install beautifulsoup4==4.7.1 imapclient==2.1.0 mail-parser==3.9.3`
+* If you use 2 factor authentication for Google you'll need to create an app password. See more details [here](https://support.google.com/accounts/answer/185833?hl=en)
 
 ## Options
 
