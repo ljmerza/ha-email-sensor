@@ -4,8 +4,6 @@ Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS,
 
 ---
 
-![](./sensor.png)
-
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE.md)
 
