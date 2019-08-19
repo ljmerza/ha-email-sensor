@@ -13,6 +13,14 @@ Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS,
 ## Installation
 
 * Add the `email` folder in your `custom_components` folder
+
+```yaml
+sensor:
+  - platform: email
+    email: !secret my_email
+    password: !secret my_email_password
+```
+
 * If the component doesn't load this might be due to Home Assistant not installing the requirements automatically through the manifests file. You can install them manaually by running `pip install beautifulsoup4==4.7.1 imapclient==2.1.0 mail-parser==3.9.3`
 * If you use 2 factor authentication for Google you'll need to create an app password. See more details [here](https://support.google.com/accounts/answer/185833?hl=en)
 
@@ -27,13 +35,6 @@ Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS,
 | smtp_port | number | **Optional** | `993` SMTP port
 | folder | string | **Optional** | `INBOX` Which folder to pull emails from
 | show_all | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder`
-
-```yaml
-sensor:
-  - platform: email
-    email: !secret my_email
-    password: !secret my_email_password
-```
 
 
 ---
