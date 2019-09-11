@@ -1,6 +1,6 @@
 # Home Assistant Email Sensor
 
-Gets emails from SMTP and prases out any tracking numbers from FedEx, UPS, USPS, Rockauto, Newegg, B&H Photo, Paypal, eBay, DHL, Philips Hue, Google Express, and Ali Express. Goes well with the [tracking-number-card](https://github.com/ljmerza/tracking-number-card) for lovelace!
+Gets emails from IMAP and prases out any tracking numbers from FedEx, UPS, USPS, Rockauto, Newegg, B&H Photo, Paypal, eBay, DHL, Philips Hue, Google Express, and Ali Express. Goes well with the [tracking-number-card](https://github.com/ljmerza/tracking-number-card) for lovelace!
 
 ---
 
@@ -31,8 +31,8 @@ sensor:
 | ---- | ---- | ------- | -----------
 | email | string | **Required** | email address
 | password | string | **Required** | email password
-| smtp_server | string | **Optional** | `imap.gmail.com`  SMTP server address>
-| smtp_port | number | **Optional** | `993` SMTP port
+| imap_server | string | **Optional** | `imap.gmail.com`  IMAP server address>
+| imap_port | number | **Optional** | `993` IMAP port
 | folder | string | **Optional** | `INBOX` Which folder to pull emails from
 | show_all | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder`
 
