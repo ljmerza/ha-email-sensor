@@ -11,35 +11,39 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
 from .const import (
-    CONF_EMAIL, CONF_PASSWORD, CONF_SHOW_ALL, CONF_IMAP_SERVER, 
-    CONF_IMAP_PORT, CONF_EMAIL_FOLDER, ATTR_EMAILS, ATTR_COUNT, 
+    CONF_EMAIL, CONF_PASSWORD, CONF_SHOW_ALL, CONF_SMTP_SERVER, 
+    CONF_SMTP_PORT, CONF_EMAIL_FOLDER, ATTR_EMAILS, ATTR_COUNT, 
     ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, 
     EMAIL_ATTR_BODY)
 
-from .parsers.ups import ATTR_UPS, parse_ups
-from .parsers.fedex import ATTR_FEDEX, parse_fedex
-from .parsers.usps import ATTR_USPS, parse_usps
-from .parsers.ali_express import ATTR_ALI_EXPRESS, parse_ali_express
-from .parsers.newegg import ATTR_NEWEGG, parse_newegg
-from .parsers.rockauto import ATTR_ROCKAUTO, parse_rockauto
-from .parsers.bh_photo import ATTR_BH_PHOTO, parse_bh_photo
-from .parsers.ebay import ATTR_EBAY, parse_ebay
-from .parsers.dhl import ATTR_DHL, parse_dhl
-from .parsers.hue import ATTR_HUE, parse_hue
-from .parsers.google_express import ATTR_GOOGLE_EXPRESS, parse_google_express
+from .parsers.ups import ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups
+from .parsers.fedex import ATTR_FEDEX, EMAIL_DOMAIN_FEDEX, parse_fedex
+from .parsers.paypal import ATTR_PAYPAL, EMAIL_DOMAIN_PAYPAL, parse_paypal
+from .parsers.usps import ATTR_USPS, EMAIL_DOMAIN_USPS, parse_usps
+from .parsers.ali_express import ATTR_ALI_EXPRESS, EMAIL_DOMAIN_ALI_EXPRESS, parse_ali_express
+from .parsers.newegg import ATTR_NEWEGG, EMAIL_DOMAIN_NEWEGG, parse_newegg
+from .parsers.rockauto import ATTR_ROCKAUTO, EMAIL_DOMAIN_ROCKAUTO, parse_rockauto
+from .parsers.bh_photo import ATTR_BH_PHOTO, EMAIL_DOMAIN_BH_PHOTO, parse_bh_photo
+from .parsers.ebay import ATTR_EBAY, EMAIL_DOMAIN_EBAY, parse_ebay
+from .parsers.dhl import ATTR_DHL, EMAIL_DOMAIN_DHL, parse_dhl
+from .parsers.hue import ATTR_HUE, EMAIL_DOMAIN_HUE, parse_hue
+from .parsers.google_express import ATTR_GOOGLE_EXPRESS, EMAIL_DOMAIN_GOOGLE_EXPRESS, parse_google_express
+from .parsers.western_digital import ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital
 
 parsers = [
-    (ATTR_UPS, parse_ups),
-    (ATTR_FEDEX, parse_fedex),
-    (ATTR_USPS, parse_usps),
-    (ATTR_ALI_EXPRESS, parse_ali_express),
-    (ATTR_NEWEGG, parse_newegg),
-    (ATTR_ROCKAUTO, parse_rockauto),
-    (ATTR_BH_PHOTO, parse_bh_photo),
-    (ATTR_EBAY, parse_ebay),
-    (ATTR_DHL, parse_dhl),
-    (ATTR_HUE, parse_hue),
-    (ATTR_GOOGLE_EXPRESS, parse_google_express),
+    (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
+    (ATTR_FEDEX, EMAIL_DOMAIN_FEDEX, parse_fedex),
+    (ATTR_PAYPAL, EMAIL_DOMAIN_PAYPAL, parse_paypal),
+    (ATTR_USPS, EMAIL_DOMAIN_USPS, parse_usps),
+    (ATTR_ALI_EXPRESS, EMAIL_DOMAIN_ALI_EXPRESS, parse_ali_express),
+    (ATTR_NEWEGG, EMAIL_DOMAIN_NEWEGG, parse_newegg),
+    (ATTR_ROCKAUTO, EMAIL_DOMAIN_ROCKAUTO, parse_rockauto),
+    (ATTR_BH_PHOTO, EMAIL_DOMAIN_BH_PHOTO, parse_bh_photo),
+    (ATTR_EBAY, EMAIL_DOMAIN_EBAY, parse_ebay),
+    (ATTR_DHL, EMAIL_DOMAIN_DHL, parse_dhl),
+    (ATTR_HUE, EMAIL_DOMAIN_HUE, parse_hue),
+    (ATTR_GOOGLE_EXPRESS, EMAIL_DOMAIN_GOOGLE_EXPRESS, parse_google_express),
+    (ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital),
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -50,8 +54,8 @@ SCAN_INTERVAL = timedelta(seconds=5*60)
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
-    vol.Required(CONF_IMAP_SERVER, default='imap.gmail.com'): cv.string,
-    vol.Required(CONF_IMAP_PORT, default=993): cv.positive_int,
+    vol.Required(CONF_SMTP_SERVER, default='imap.gmail.com'): cv.string,
+    vol.Required(CONF_SMTP_PORT, default=993): cv.positive_int,
     vol.Required(CONF_EMAIL_FOLDER, default='INBOX'): cv.string,
     vol.Required(CONF_SHOW_ALL, default=False): cv.boolean,
 })
@@ -69,8 +73,8 @@ class EmailEntity(Entity):
         """Init the Email Entity."""
         self._attr = None
 
-        self.imap_server = config[CONF_IMAP_SERVER]
-        self.imap_port = config[CONF_IMAP_PORT]
+        self.smtp_server = config[CONF_SMTP_SERVER]
+        self.smtp_port = config[CONF_SMTP_PORT]
         self.email_address = config[CONF_EMAIL]
         self.password = config[CONF_PASSWORD]
         self.email_folder = config[CONF_EMAIL_FOLDER]
@@ -84,7 +88,7 @@ class EmailEntity(Entity):
             ATTR_TRACKING_NUMBERS: {}
         }
         emails = []
-        server = IMAPClient(self.imap_server, use_uid=True)
+        server = IMAPClient(self.smtp_server, use_uid=True)
 
         try:
             server.login(self.email_address, self.password)
@@ -117,21 +121,26 @@ class EmailEntity(Entity):
         self._attr[ATTR_TRACKING_NUMBERS] = {}
 
         # empty out all parser arrays
-        for ATTR, parser in parsers:
+        for ATTR, EMAIL_DOMAIN, parser in parsers:
             self._attr[ATTR_TRACKING_NUMBERS][ATTR] = []
 
         # for each email run each parser and save in the corresponding ATTR
         for email in emails:
-            for ATTR, parser in parsers:
+            email_from = email[EMAIL_ATTR_FROM]
+            if isinstance(email_from, (list, tuple)):
+                email_from = list(email_from)
+                email_from = ''.join(list(email_from[0]))
+
+            for ATTR, EMAIL_DOMAIN, parser in parsers:
                 try:
-                    self._attr[ATTR_TRACKING_NUMBERS][ATTR] = self._attr[ATTR_TRACKING_NUMBERS][ATTR] + parser(email)
+                    if EMAIL_DOMAIN in email_from:
+                        self._attr[ATTR_TRACKING_NUMBERS][ATTR] = self._attr[ATTR_TRACKING_NUMBERS][ATTR] + parser(email=email)
                 except Exception as err:
                     _LOGGER.error('{} error: {}'.format(ATTR, err))            
 
         # remove duplicates
-        for ATTR, parser in parsers:
-            self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
-                dict.fromkeys(self._attr[ATTR_TRACKING_NUMBERS][ATTR]))
+        for ATTR, EMAIL_DOMAIN, parser in parsers:
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(dict.fromkeys(self._attr[ATTR_TRACKING_NUMBERS][ATTR]))
            
         server.logout()
 
