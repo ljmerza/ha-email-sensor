@@ -29,6 +29,7 @@ from .parsers.dhl import ATTR_DHL, EMAIL_DOMAIN_DHL, parse_dhl
 from .parsers.hue import ATTR_HUE, EMAIL_DOMAIN_HUE, parse_hue
 from .parsers.google_express import ATTR_GOOGLE_EXPRESS, EMAIL_DOMAIN_GOOGLE_EXPRESS, parse_google_express
 from .parsers.western_digital import ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital
+from .parsers.monoprice import ATTR_MONOPRICE, EMAIL_DOMAIN_MONOPRICE, parse_monoprice
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -44,6 +45,7 @@ parsers = [
     (ATTR_HUE, EMAIL_DOMAIN_HUE, parse_hue),
     (ATTR_GOOGLE_EXPRESS, EMAIL_DOMAIN_GOOGLE_EXPRESS, parse_google_express),
     (ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital),
+    (ATTR_MONOPRICE, EMAIL_DOMAIN_MONOPRICE, parse_monoprice),
 ]
 
 _LOGGER = logging.getLogger(__name__)
