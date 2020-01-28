@@ -8,6 +8,7 @@
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/dhl.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/ebay.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/fedex.py",
+  "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/georgia_power.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/google_express.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/hue.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/monoprice.py",
