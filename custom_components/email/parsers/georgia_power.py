@@ -6,7 +6,7 @@ from ..const import EMAIL_ATTR_FROM, EMAIL_ATTR_BODY
 
 
 _LOGGER = logging.getLogger(__name__)
-EMAIL_DOMAIN_GEORGIA_POWER = 'arsaboo@gmail.com'
+EMAIL_DOMAIN_GEORGIA_POWER = 'southernco.com'
 ATTR_GEORGIA_POWER = 'georgia_power'
 
 
