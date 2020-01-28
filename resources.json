@@ -8,10 +8,13 @@
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/dhl.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/ebay.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/fedex.py",
+  "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/google_express.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/hue.py",
+  "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/monoprice.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/newegg.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/paypal.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/rockauto.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/ups.py",
   "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/usps.py"
+  "https://raw.githubusercontent.com/ljmerza/ha-email-sensor/master/custom_components/email/parsers/western_digital.py"
 ]
