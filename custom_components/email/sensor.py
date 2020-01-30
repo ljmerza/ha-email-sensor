@@ -13,7 +13,7 @@ from homeassistant.helpers.entity import Entity
 from .const import (
     CONF_EMAIL, CONF_PASSWORD, CONF_SHOW_ALL, CONF_IMAP_SERVER,
     CONF_IMAP_PORT, CONF_EMAIL_FOLDER, ATTR_EMAILS, ATTR_COUNT,
-    ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT,
+    ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT, 
     EMAIL_ATTR_BODY)
 
 from .parsers.ups import ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups
@@ -31,6 +31,7 @@ from .parsers.google_express import ATTR_GOOGLE_EXPRESS, EMAIL_DOMAIN_GOOGLE_EXP
 from .parsers.western_digital import ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital
 from .parsers.monoprice import ATTR_MONOPRICE, EMAIL_DOMAIN_MONOPRICE, parse_monoprice
 from .parsers.georgia_power import ATTR_GEORGIA_POWER, EMAIL_DOMAIN_GEORGIA_POWER, parse_georgia_power
+from .parsers.best_buy import ATTR_BEST_BUY, EMAIL_DOMAIN_BEST_BUY, parse_best_buy
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -48,6 +49,7 @@ parsers = [
     (ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital),
     (ATTR_MONOPRICE, EMAIL_DOMAIN_MONOPRICE, parse_monoprice),
     (ATTR_GEORGIA_POWER, EMAIL_DOMAIN_GEORGIA_POWER, parse_georgia_power),
+    (ATTR_BEST_BUY, EMAIL_DOMAIN_BEST_BUY, parse_best_buy),
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -88,7 +90,7 @@ class EmailEntity(Entity):
     def update(self):
         """Update data from Email API."""
         self._attr = {
-            ATTR_EMAILS: [],
+            ATTR_EMAILS: [], 
             ATTR_TRACKING_NUMBERS: {}
         }
         emails = []
@@ -101,8 +103,8 @@ class EmailEntity(Entity):
             _LOGGER.error('IMAPClient login error {}'.format(err))
             return False
 
-        try:
-            messages = server.search(self.flag)
+        try: 
+            messages = server.search(self.flag )
             for uid, message_data in server.fetch(messages, 'RFC822').items():
                 try:
                     mail = parse_from_bytes(message_data[b'RFC822'])
@@ -116,8 +118,7 @@ class EmailEntity(Entity):
                         EMAIL_ATTR_SUBJECT: mail.subject,
                     })
                 except Exception as err:
-                    _LOGGER.error(
-                        'mailparser parse_from_bytes error: {}'.format(err))
+                    _LOGGER.error('mailparser parse_from_bytes error: {}'.format(err))
 
         except Exception as err:
             _LOGGER.error('IMAPClient update error: {}'.format(err))
@@ -139,18 +140,16 @@ class EmailEntity(Entity):
             for ATTR, EMAIL_DOMAIN, parser in parsers:
                 try:
                     if EMAIL_DOMAIN in email_from:
-                        self._attr[ATTR_TRACKING_NUMBERS][ATTR] = self._attr[ATTR_TRACKING_NUMBERS][ATTR] + parser(
-                            email=email)
+                        self._attr[ATTR_TRACKING_NUMBERS][ATTR] = self._attr[ATTR_TRACKING_NUMBERS][ATTR] + parser(email=email)
                 except Exception as err:
-                    _LOGGER.error('{} error: {}'.format(ATTR, err))
+                    _LOGGER.error('{} error: {}'.format(ATTR, err))            
 
         # remove duplicates
         for ATTR, EMAIL_DOMAIN, parser in parsers:
             tracking_domain = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
             if len(tracking_domain) > 0 and isinstance(tracking_domain[0], str):
-                self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
-                    dict.fromkeys(tracking_domain))
-
+                self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(dict.fromkeys(tracking_domain))
+           
         server.logout()
 
     @property
