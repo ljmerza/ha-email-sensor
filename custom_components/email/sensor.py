@@ -33,6 +33,7 @@ from .parsers.monoprice import ATTR_MONOPRICE, EMAIL_DOMAIN_MONOPRICE, parse_mon
 from .parsers.georgia_power import ATTR_GEORGIA_POWER, EMAIL_DOMAIN_GEORGIA_POWER, parse_georgia_power
 from .parsers.best_buy import ATTR_BEST_BUY, EMAIL_DOMAIN_BEST_BUY, parse_best_buy
 from .parsers.dollar_shave_club import ATTR_DOLLAR_SHAVE_CLUB, EMAIL_DOMAIN_DOLLAR_SHAVE_CLUB, parse_dollar_shave_club
+from .parsers.nuleaf import ATTR_NULEAF, EMAIL_DOMAIN_NULEAF, parse_nuleaf
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -52,6 +53,7 @@ parsers = [
     (ATTR_GEORGIA_POWER, EMAIL_DOMAIN_GEORGIA_POWER, parse_georgia_power),
     (ATTR_BEST_BUY, EMAIL_DOMAIN_BEST_BUY, parse_best_buy),
     (ATTR_DOLLAR_SHAVE_CLUB, EMAIL_DOMAIN_DOLLAR_SHAVE_CLUB, parse_dollar_shave_club),
+    (ATTR_NULEAF, EMAIL_DOMAIN_NULEAF, parse_nuleaf),
 ]
 
 _LOGGER = logging.getLogger(__name__)
