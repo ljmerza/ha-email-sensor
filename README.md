@@ -1,6 +1,6 @@
 # Home Assistant Email Sensor
 
-Gets emails from IMAP and parses out any tracking numbers from FedEx, UPS, USPS, Rockauto, Best Buy, Dollar Shave Club, Newegg, B&H Photo, Paypal, eBay, DHL, Philips Hue, Google Express, Monoprice, NuLeaf, Timeless, and Ali Express. Also tracks Georgia Power daily emails. Goes well with the [tracking-number-card](https://github.com/ljmerza/tracking-number-card) for lovelace!
+Gets emails from IMAP and parses out any tracking numbers from FedEx, UPS, USPS, Rockauto, Best Buy, Dollar Shave Club, Newegg, B&H Photo, Paypal, eBay, DHL, Philips Hue, Google Express, Monoprice, NuLeaf, Timeless, DSW, and Ali Express. Also tracks Georgia Power daily emails. Goes well with the [tracking-number-card](https://github.com/ljmerza/tracking-number-card) for lovelace!
 
 ---
 
@@ -27,14 +27,14 @@ sensor:
 
 ## Options
 
-| Name | Type | Requirement | `default` Description
-| ---- | ---- | ------- | -----------
-| email | string | **Required** | email address
-| password | string | **Required** | email password
-| imap_server | string | **Optional** | `imap.gmail.com`  IMAP server address>
-| imap_port | number | **Optional** | `993` IMAP port
-| folder | string | **Optional** | `INBOX` Which folder to pull emails from
-| show_all | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder`
+| Name        | Type    | Requirement  | `default` Description                                                 |
+| ----------- | ------- | ------------ | --------------------------------------------------------------------- |
+| email       | string  | **Required** | email address                                                         |
+| password    | string  | **Required** | email password                                                        |
+| imap_server | string  | **Optional** | `imap.gmail.com`  IMAP server address>                                |
+| imap_port   | number  | **Optional** | `993` IMAP port                                                       |
+| folder      | string  | **Optional** | `INBOX` Which folder to pull emails from                              |
+| show_all    | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder` |
 
 
 ---

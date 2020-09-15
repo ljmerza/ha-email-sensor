@@ -35,6 +35,7 @@ from .parsers.best_buy import ATTR_BEST_BUY, EMAIL_DOMAIN_BEST_BUY, parse_best_b
 from .parsers.dollar_shave_club import ATTR_DOLLAR_SHAVE_CLUB, EMAIL_DOMAIN_DOLLAR_SHAVE_CLUB, parse_dollar_shave_club
 from .parsers.nuleaf import ATTR_NULEAF, EMAIL_DOMAIN_NULEAF, parse_nuleaf
 from .parsers.timeless import ATTR_TIMELESS, EMAIL_DOMAIN_TIMLESS, parse_timeless
+from .parsers.dsw import ATTR_DSW, EMAIL_DOMAIN_DSW, parse_dsw
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -56,6 +57,7 @@ parsers = [
     (ATTR_DOLLAR_SHAVE_CLUB, EMAIL_DOMAIN_DOLLAR_SHAVE_CLUB, parse_dollar_shave_club),
     (ATTR_NULEAF, EMAIL_DOMAIN_NULEAF, parse_nuleaf),
     (ATTR_TIMELESS, EMAIL_DOMAIN_TIMLESS, parse_timeless),
+    (ATTR_DSW, EMAIL_DOMAIN_DSW, parse_dsw),
 ]
 
 _LOGGER = logging.getLogger(__name__)
