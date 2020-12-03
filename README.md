@@ -1,6 +1,29 @@
 # Home Assistant Email Sensor
 
-Gets emails from IMAP and parses out any tracking numbers from FedEx, UPS, USPS, Rockauto, Best Buy, Dollar Shave Club, Newegg, B&H Photo, Paypal, eBay, DHL, Philips Hue, Google Express, Monoprice, NuLeaf, Timeless, DSW, and Ali Express. Also tracks Georgia Power daily emails. Goes well with the [tracking-number-card](https://github.com/ljmerza/tracking-number-card) for lovelace!
+Gets emails from IMAP and parses out any tracking numbers. Goes well with the [tracking-number-card](https://github.com/ljmerza/tracking-number-card) for lovelace!
+
+Supported Emails
+- Ali Express
+- B&H Photo
+- Best Buy
+- DHL
+- Dollar Shave Club
+- DSW
+- eBay
+- FedEx
+- Georgia Power 
+- Google Express
+- Monoprice
+- NewEgg
+- Nuleaf
+- Paypal
+- Philips Hue
+- Reolink
+- Rockauto
+- Timeless
+- UPS
+- USPS
+- Wyze
 
 ---
 

@@ -36,6 +36,8 @@ from .parsers.dollar_shave_club import ATTR_DOLLAR_SHAVE_CLUB, EMAIL_DOMAIN_DOLL
 from .parsers.nuleaf import ATTR_NULEAF, EMAIL_DOMAIN_NULEAF, parse_nuleaf
 from .parsers.timeless import ATTR_TIMELESS, EMAIL_DOMAIN_TIMLESS, parse_timeless
 from .parsers.dsw import ATTR_DSW, EMAIL_DOMAIN_DSW, parse_dsw
+from .parsers.wyze import ATTR_WYZE, EMAIL_DOMAIN_WYZE, parse_wyze
+from .parsers.reolink import ATTR_REOLINK, EMAIL_DOMAIN_REOLINK, parse_reolink
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -58,6 +60,8 @@ parsers = [
     (ATTR_NULEAF, EMAIL_DOMAIN_NULEAF, parse_nuleaf),
     (ATTR_TIMELESS, EMAIL_DOMAIN_TIMLESS, parse_timeless),
     (ATTR_DSW, EMAIL_DOMAIN_DSW, parse_dsw),
+    (ATTR_WYZE, EMAIL_DOMAIN_WYZE, parse_wyze),
+    (ATTR_REOLINK, EMAIL_DOMAIN_REOLINK, parse_reolink),
 ]
 
 _LOGGER = logging.getLogger(__name__)
