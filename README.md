@@ -6,6 +6,7 @@ Supported Emails
 - Ali Express
 - B&H Photo
 - Best Buy
+- Chewy
 - DHL
 - Dollar Shave Club
 - DSW
