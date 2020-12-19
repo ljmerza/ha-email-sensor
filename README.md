@@ -27,7 +27,7 @@ Supported Emails
 - Wyze
 
 
-If you want support for tracking, forward me the email (ljmerza at gmail) and open a PR.
+If you want support for tracking, forward me the email (ljmerza at gmail) and open an issue.
 ---
 
 [![GitHub Release][releases-shield]][releases]
