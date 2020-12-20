@@ -3,6 +3,7 @@
 Gets emails from IMAP and parses out any tracking numbers. Goes well with the [tracking-number-card](https://github.com/ljmerza/tracking-number-card) for lovelace!
 
 Supported Emails
+
 - Ali Express
 - B&H Photo
 - Best Buy
@@ -14,6 +15,7 @@ Supported Emails
 - FedEx
 - Georgia Power 
 - Google Express
+- Groupon
 - Monoprice
 - NewEgg
 - Nuleaf
@@ -26,8 +28,8 @@ Supported Emails
 - USPS
 - Wyze
 
-
 If you want support for tracking, forward me the email (ljmerza at gmail) and open a PR.
+
 ---
 
 [![GitHub Release][releases-shield]][releases]
@@ -38,7 +40,7 @@ If you want support for tracking, forward me the email (ljmerza at gmail) and op
 
 ## Installation
 
-* Add the `email` folder in your `custom_components` folder
+- Add the `email` folder in your `custom_components` folder
 
 ```yaml
 sensor:
@@ -47,9 +49,8 @@ sensor:
     password: !secret my_email_password
 ```
 
-* If the component doesn't load this might be due to Home Assistant not installing the requirements automatically through the manifests file. You can install them manaually by running `pip install beautifulsoup4==4.7.1 imapclient==2.1.0 mail-parser==3.9.3`
-* If you use 2 factor authentication for Google you'll need to create an app password. See more details [here](https://support.google.com/accounts/answer/185833?hl=en)
-
+- If the component doesn't load this might be due to Home Assistant not installing the requirements automatically through the manifests file. You can install them manaually by running `pip install beautifulsoup4==4.7.1 imapclient==2.1.0 mail-parser==3.9.3`
+- If you use 2 factor authentication for Google you'll need to create an app password. See more details [here](https://support.google.com/accounts/answer/185833?hl=en)
 
 ## Options
 
@@ -62,13 +63,11 @@ sensor:
 | folder      | string  | **Optional** | `INBOX` Which folder to pull emails from                              |
 | show_all    | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder` |
 
-
 ---
 
 Enjoy my card? Help me out for a couple of :beers: or a :coffee:!
 
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/JMISm06AD)
-
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/ljmerza/ha-email-sensor.svg?style=for-the-badge
 [commits]: https://github.com/ljmerza/ha-email-sensor/commits/master
