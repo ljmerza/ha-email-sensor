@@ -6,8 +6,8 @@ from ..const import EMAIL_ATTR_BODY
 
 
 _LOGGER = logging.getLogger(__name__)
-EMAIL_DOMAIN_DSW = 'dsw.com'
 ATTR_DSW = 'DSW'
+EMAIL_DOMAIN_DSW = 'dsw.com'
 
 
 def parse_dsw(email):

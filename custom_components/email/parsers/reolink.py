@@ -6,8 +6,8 @@ from ..const import EMAIL_ATTR_BODY
 
 
 _LOGGER = logging.getLogger(__name__)
-EMAIL_DOMAIN_REOLINK = 'reolink.com'
 ATTR_REOLINK = 'reolink'
+EMAIL_DOMAIN_REOLINK = 'reolink.com'
 
 
 def parse_reolink(email):

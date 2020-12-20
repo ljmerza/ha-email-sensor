@@ -6,8 +6,8 @@ from ..const import EMAIL_ATTR_BODY
 
 
 _LOGGER = logging.getLogger(__name__)
-EMAIL_DOMAIN_WYZE = 'wyze.com'
 ATTR_WYZE = 'wyze'
+EMAIL_DOMAIN_WYZE = 'wyze.com'
 
 
 def parse_wyze(email):

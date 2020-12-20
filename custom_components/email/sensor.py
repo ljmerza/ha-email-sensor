@@ -39,6 +39,7 @@ from .parsers.dsw import ATTR_DSW, EMAIL_DOMAIN_DSW, parse_dsw
 from .parsers.wyze import ATTR_WYZE, EMAIL_DOMAIN_WYZE, parse_wyze
 from .parsers.reolink import ATTR_REOLINK, EMAIL_DOMAIN_REOLINK, parse_reolink
 from .parsers.chewy import ATTR_CHEWY, EMAIL_DOMAIN_CHEWY, parse_chewy
+from .parsers.groupon import ATTR_GROUPON, EMAIL_DOMAIN_GROUPON, parse_groupon
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -64,6 +65,7 @@ parsers = [
     (ATTR_WYZE, EMAIL_DOMAIN_WYZE, parse_wyze),
     (ATTR_REOLINK, EMAIL_DOMAIN_REOLINK, parse_reolink),
     (ATTR_CHEWY, EMAIL_DOMAIN_CHEWY, parse_chewy),
+    (ATTR_GROUPON, EMAIL_DOMAIN_GROUPON, parse_groupon),
 ]
 
 _LOGGER = logging.getLogger(__name__)
