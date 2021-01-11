@@ -23,6 +23,7 @@ Supported Emails
 - Philips Hue
 - Reolink
 - Rockauto
+- Swiss Post
 - Timeless
 - UPS
 - USPS

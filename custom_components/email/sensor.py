@@ -41,6 +41,8 @@ from .parsers.reolink import ATTR_REOLINK, EMAIL_DOMAIN_REOLINK, parse_reolink
 from .parsers.chewy import ATTR_CHEWY, EMAIL_DOMAIN_CHEWY, parse_chewy
 from .parsers.groupon import ATTR_GROUPON, EMAIL_DOMAIN_GROUPON, parse_groupon
 from .parsers.zazzle import ATTR_ZAZZLE, EMAIL_DOMAIN_ZAZZLE, parse_zazzle
+from .parsers.home_depot import ATTR_HOME_DEPOT, EMAIL_DOMAIN_HOME_DEPOT, parse_home_depot
+from .parsers.swiss_post import ATTR_SWISS_POST, EMAIL_DOMAIN_SWISS_POST, parse_swiss_post
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -68,6 +70,8 @@ parsers = [
     (ATTR_CHEWY, EMAIL_DOMAIN_CHEWY, parse_chewy),
     (ATTR_GROUPON, EMAIL_DOMAIN_GROUPON, parse_groupon),
     (ATTR_ZAZZLE, EMAIL_DOMAIN_ZAZZLE, parse_zazzle),
+    (ATTR_HOME_DEPOT, EMAIL_DOMAIN_HOME_DEPOT, parse_home_depot),
+    (ATTR_SWISS_POST, EMAIL_DOMAIN_SWISS_POST, parse_swiss_post),
 ]
 
 _LOGGER = logging.getLogger(__name__)
