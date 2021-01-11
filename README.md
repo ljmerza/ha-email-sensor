@@ -64,6 +64,7 @@ sensor:
 | imap_port   | number  | **Optional** | `993` IMAP port                                                       |
 | folder      | string  | **Optional** | `INBOX` Which folder to pull emails from                              |
 | show_all    | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder` |
+| ssl         | boolean | **Optional** | `true` enable or disable SSL when using IMAP                          |
 
 ---
 
