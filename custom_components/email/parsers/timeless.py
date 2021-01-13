@@ -17,7 +17,6 @@ def parse_timeless(email):
     elements = soup.find_all('a')
     for element in elements:
         link = element.get('href')
-        _LOGGER.error(link)
         if not link:
             continue
         match = re.search(r'TrackConfirmAction\.action\?tLabels=(.*?)$', link)
