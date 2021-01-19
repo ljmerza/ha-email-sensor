@@ -6,6 +6,7 @@ Supported Emails
 
 - Ali Express
 - B&H Photo
+- Bespoke Post
 - Best Buy
 - Chewy
 - DHL
