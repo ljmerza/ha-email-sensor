@@ -11,5 +11,5 @@
         "imapclient==2.1.0",
         "mail-parser==3.9.3"
     ],
-    "version": "2.14.0"
+    "version": "2.14.1"
 }
