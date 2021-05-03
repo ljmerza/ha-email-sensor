@@ -44,6 +44,9 @@ from .parsers.zazzle import ATTR_ZAZZLE, EMAIL_DOMAIN_ZAZZLE, parse_zazzle
 from .parsers.home_depot import ATTR_HOME_DEPOT, EMAIL_DOMAIN_HOME_DEPOT, parse_home_depot
 from .parsers.swiss_post import ATTR_SWISS_POST, EMAIL_DOMAIN_SWISS_POST, parse_swiss_post
 from .parsers.bespoke_post import ATTR_DSW, EMAIL_DOMAIN_DSW, parse_bespoke_post
+from .parsers.manta_sleep import ATTR_MANTA_SLEEP, EMAIL_DOMAIN_MANTA_SLEEP, parse_manta_sleep
+
+
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
     (ATTR_FEDEX, EMAIL_DOMAIN_FEDEX, parse_fedex),
@@ -73,6 +76,7 @@ parsers = [
     (ATTR_HOME_DEPOT, EMAIL_DOMAIN_HOME_DEPOT, parse_home_depot),
     (ATTR_SWISS_POST, EMAIL_DOMAIN_SWISS_POST, parse_swiss_post),
     (ATTR_DSW, EMAIL_DOMAIN_DSW, parse_bespoke_post),
+    (ATTR_MANTA_SLEEP, EMAIL_DOMAIN_MANTA_SLEEP, parse_manta_sleep),
 ]
 
 _LOGGER = logging.getLogger(__name__)
