@@ -17,6 +17,7 @@ Supported Emails
 - Georgia Power 
 - Google Express
 - Groupon
+- Manta Sleep
 - Monoprice
 - NewEgg
 - Nuleaf
