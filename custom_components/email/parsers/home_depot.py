@@ -29,11 +29,12 @@ def parse_home_depot(email):
 
         try:
             tracking_number = element.text
-            _LOGGER.error(tracking_number)
             isNan = math.isnan(int(tracking_number))
 
-            if not isNan and tracking_number not in tracking_numbers:
-                tracking_numbers.append(tracking_number)
+            stripped_number = tracking_number.rstrip()
+
+            if not isNan and stripped_number not in tracking_numbers:
+                tracking_numbers.append(stripped_number)
         except:
             pass
 

@@ -1,6 +1,7 @@
 """Support for Google - Calendar Event Devices."""
 from datetime import timedelta
 import logging
+import re
 
 from imapclient import IMAPClient
 from mailparser import parse_from_bytes
@@ -12,7 +13,7 @@ from homeassistant.helpers.entity import Entity
 
 from .const import (
     CONF_EMAIL, CONF_PASSWORD, CONF_SHOW_ALL, CONF_IMAP_SERVER,
-    CONF_IMAP_PORT, CONF_SSL, CONF_EMAIL_FOLDER, ATTR_EMAILS, ATTR_COUNT,
+    CONF_IMAP_PORT, CONF_SSL, CONF_EMAIL_FOLDER,
     ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT,
     EMAIL_ATTR_BODY)
 
@@ -94,6 +95,73 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_SHOW_ALL, default=False): cv.boolean,
 })
 
+TRACKING_NUMBER_CARD_URLS = {
+  'ups': "https://www.ups.com/track?loc=en_US&tracknum=",
+  'usps': "https://tools.usps.com/go/TrackConfirmAction?tLabels=",
+  'fedex': "https://www.fedex.com/apps/fedextrack/?tracknumbers=",
+  'dhl': 'https://www.logistics.dhl/us-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=',
+  'swiss_post': 'https://www.swisspost.ch/track?formattedParcelCodes=',
+  'unknown': 'https://www.google.com/search?q=',
+}
+
+def find_carrier(tracking_number, email_domain):
+    """Try to compute the carrier of a given tracking number / email domain"""
+    link = ""
+    carrier = ""
+
+    isNumber = False
+    try:
+        val = int(tracking_number)
+        isNumber = True
+    except ValueError:
+        pass
+
+    length = len(tracking_number) if not isNumber else 0
+
+    if bool(re.search('^1Z', tracking_number)):
+        link = TRACKING_NUMBER_CARD_URLS["ups"]
+        carrier = "UPS"
+
+    elif bool(re.search('CN$', tracking_number)):
+        link = TRACKING_NUMBER_CARD_URLS["usps"]
+        carrier = "USPS"
+
+    else:
+        if email_domain == EMAIL_DOMAIN_UPS:
+            link = TRACKING_NUMBER_CARD_URLS["ups"]
+            carrier = "UPS"
+        elif email_domain == EMAIL_DOMAIN_FEDEX:
+            link = TRACKING_NUMBER_CARD_URLS["fedex"]
+            carrier = "FedEx"
+        elif email_domain == EMAIL_DOMAIN_USPS:
+            link = TRACKING_NUMBER_CARD_URLS["usps"]
+            carrier = "USPS"
+        elif email_domain == EMAIL_DOMAIN_DHL:
+            link = TRACKING_NUMBER_CARD_URLS["dhl"]
+            carrier = "DHL"
+        elif email_domain == EMAIL_DOMAIN_SWISS_POST:
+            link = TRACKING_NUMBER_CARD_URLS["swiss_post"]
+            carrier = "Swiss Post"
+        else:
+            if (isNumber and (length == 12 or length == 15 or length == 20)):
+                link = TRACKING_NUMBER_CARD_URLS["fedex"]
+                carrier = "FedEx"
+            elif (isNumber and length == 22):
+              link = TRACKING_NUMBER_CARD_URLS["usp"]
+              carrier = "USPS"
+            elif (length > 25):
+                link = TRACKING_NUMBER_CARD_URLS["dh"]
+                carrier = "DHL"
+            else:
+                link = TRACKING_NUMBER_CARD_URLS["unknown"]
+                carrier = email_domain
+
+    return {
+        'tracking_number': tracking_number,
+        'carrier': carrier,
+        'origin': email_domain,
+        'link': f'{link}{tracking_number}',
+    }
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Email platform."""
@@ -105,7 +173,9 @@ class EmailEntity(Entity):
 
     def __init__(self, config):
         """Init the Email Entity."""
-        self._attr = None
+        self._attr = {
+            ATTR_TRACKING_NUMBERS: {}
+        }
 
         self.imap_server = config[CONF_IMAP_SERVER]
         self.imap_port = config[CONF_IMAP_PORT]
@@ -119,9 +189,9 @@ class EmailEntity(Entity):
     def update(self):
         """Update data from Email API."""
         self._attr = {
-            ATTR_EMAILS: [],
             ATTR_TRACKING_NUMBERS: {}
         }
+
         emails = []
         server = IMAPClient(self.imap_server, use_uid=True, ssl=self.ssl)
 
@@ -142,19 +212,12 @@ class EmailEntity(Entity):
                         EMAIL_ATTR_SUBJECT: mail.subject,
                         EMAIL_ATTR_BODY: mail.body
                     })
-                    self._attr[ATTR_EMAILS].append({
-                        EMAIL_ATTR_FROM: mail.from_,
-                        EMAIL_ATTR_SUBJECT: mail.subject,
-                    })
                 except Exception as err:
-                    _LOGGER.error(
+                    _LOGGER.warning(
                         'mailparser parse_from_bytes error: {}'.format(err))
 
         except Exception as err:
             _LOGGER.error('IMAPClient update error: {}'.format(err))
-
-        self._attr[ATTR_COUNT] = len(emails)
-        self._attr[ATTR_TRACKING_NUMBERS] = {}
 
         # empty out all parser arrays
         for ATTR, EMAIL_DOMAIN, parser in parsers:
@@ -177,10 +240,16 @@ class EmailEntity(Entity):
 
         # remove duplicates
         for ATTR, EMAIL_DOMAIN, parser in parsers:
-            tracking_domain = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
-            if len(tracking_domain) > 0 and isinstance(tracking_domain[0], str):
+            tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
+            if len(tracking_numbers) > 0 and isinstance(tracking_numbers[0], str):
                 self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
-                    dict.fromkeys(tracking_domain))
+                    dict.fromkeys(tracking_numbers))
+
+        # format tracking numbers to add carrier type
+        for ATTR, EMAIL_DOMAIN, parser in parsers:
+            tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
+            self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(map(lambda x: find_carrier(x, EMAIL_DOMAIN), tracking_numbers))
+            _LOGGER.debug(self._attr[ATTR_TRACKING_NUMBERS][ATTR])
 
         server.logout()
 
@@ -195,8 +264,9 @@ class EmailEntity(Entity):
         return self._attr.get('count', 0)
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes."""
+        _LOGGER.debug(self._attr)
         return self._attr
 
     @property
