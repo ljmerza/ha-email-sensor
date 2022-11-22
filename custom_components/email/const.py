@@ -10,6 +10,7 @@ CONF_EMAIL_FOLDER = 'folder'
 CONF_SHOW_ALL = 'show_all'
 CONF_SSL = 'ssl'
 
+ATTR_COUNT = 'count'
 ATTR_TRACKING_NUMBERS = 'tracking_numbers'
 
 EMAIL_ATTR_FROM = 'from'
