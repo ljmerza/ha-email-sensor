@@ -1,5 +1,5 @@
 """Support for Google - Calendar Event Devices."""
-from datetime import timedelta
+from datetime import timedelta, date
 import logging
 import re
 
@@ -13,7 +13,7 @@ from homeassistant.helpers.entity import Entity
 
 from .const import (
     CONF_EMAIL, CONF_PASSWORD, CONF_SHOW_ALL, CONF_IMAP_SERVER,
-    CONF_IMAP_PORT, CONF_SSL, CONF_EMAIL_FOLDER,
+    CONF_IMAP_PORT, CONF_SSL, CONF_EMAIL_FOLDER, CONF_DAYS_OLD,
     ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT,
     EMAIL_ATTR_BODY)
 
@@ -46,6 +46,9 @@ from .parsers.home_depot import ATTR_HOME_DEPOT, EMAIL_DOMAIN_HOME_DEPOT, parse_
 from .parsers.swiss_post import ATTR_SWISS_POST, EMAIL_DOMAIN_SWISS_POST, parse_swiss_post
 from .parsers.bespoke_post import ATTR_DSW, EMAIL_DOMAIN_DSW, parse_bespoke_post
 from .parsers.manta_sleep import ATTR_MANTA_SLEEP, EMAIL_DOMAIN_MANTA_SLEEP, parse_manta_sleep
+from .parsers.prusa import ATTR_PRUSA, EMAIL_DOMAIN_PRUSA, parse_prusa
+from .parsers.adam_eve import ATTR_ADAM_AND_EVE, EMAIL_DOMAIN_ADAM_AND_EVE, parse_adam_and_eve
+from .parsers.target import ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target
 
 
 parsers = [
@@ -78,6 +81,9 @@ parsers = [
     (ATTR_SWISS_POST, EMAIL_DOMAIN_SWISS_POST, parse_swiss_post),
     (ATTR_DSW, EMAIL_DOMAIN_DSW, parse_bespoke_post),
     (ATTR_MANTA_SLEEP, EMAIL_DOMAIN_MANTA_SLEEP, parse_manta_sleep),
+    (ATTR_PRUSA, EMAIL_DOMAIN_PRUSA, parse_prusa),
+    (ATTR_ADAM_AND_EVE, EMAIL_DOMAIN_ADAM_AND_EVE, parse_adam_and_eve),
+    (ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target),
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -88,6 +94,7 @@ SCAN_INTERVAL = timedelta(seconds=5*60)
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
+    vol.Required(CONF_DAYS_OLD, default='30'): cv.string,
     vol.Required(CONF_IMAP_SERVER, default='imap.gmail.com'): cv.string,
     vol.Required(CONF_IMAP_PORT, default=993): cv.positive_int,
     vol.Required(CONF_SSL, default=True): cv.boolean,
@@ -105,56 +112,76 @@ TRACKING_NUMBER_CARD_URLS = {
 }
 
 def find_carrier(tracking_number, email_domain):
-    """Try to compute the carrier of a given tracking number / email domain"""
     link = ""
     carrier = ""
+   
+    usps_pattern = [
+        '^(94|93|92|94|95)[0-9]{20}$',
+        '^(94|93|92|94|95)[0-9]{22}$',
+        '^(70|14|23|03)[0-9]{14}$',
+        '^(M0|82)[0-9]{8}$',
+        '^([A-Z]{2})[0-9]{9}([A-Z]{2})$'
+    ]
 
-    isNumber = False
-    try:
-        val = int(tracking_number)
-        isNumber = True
-    except ValueError:
-        pass
-
-    length = len(tracking_number) if not isNumber else 0
-
-    if bool(re.search('^1Z', tracking_number)):
+    ups_pattern = [
+        '^(1Z)[0-9A-Z]{16}$',
+        '^(T)+[0-9A-Z]{10}$',
+        '^[0-9]{9}$',
+        '^[0-9]{26}$'
+    ]
+    
+    fedex_pattern = [
+        '^[0-9]{20}$',
+        '^[0-9]{15}$',
+        '^[0-9]{12}$',
+        '^[0-9]{22}$'
+    ]
+    
+    usps = "(" + ")|(".join(usps_pattern) + ")"
+    fedex = "(" + ")|(".join(fedex_pattern) + ")"
+    ups= "(" + ")|(".join(ups_pattern) + ")"
+    
+    # if from carrier themself then use that
+    if email_domain == EMAIL_DOMAIN_UPS:
         link = TRACKING_NUMBER_CARD_URLS["ups"]
         carrier = "UPS"
-
-    elif bool(re.search('CN$', tracking_number)):
+    elif email_domain == EMAIL_DOMAIN_FEDEX:
+        link = TRACKING_NUMBER_CARD_URLS["fedex"]
+        carrier = "FedEx"
+    elif email_domain == EMAIL_DOMAIN_USPS:
         link = TRACKING_NUMBER_CARD_URLS["usps"]
         carrier = "USPS"
-
+    elif email_domain == EMAIL_DOMAIN_DHL:
+        link = TRACKING_NUMBER_CARD_URLS["dhl"]
+        carrier = "DHL"
+    elif email_domain == EMAIL_DOMAIN_SWISS_POST:
+        link = TRACKING_NUMBER_CARD_URLS["swiss_post"]
+        carrier = "Swiss Post"
+    
+    # regex tracking number
+    elif re.match(usps, tracking_number) != None:
+        link = TRACKING_NUMBER_CARD_URLS["usps"]
+        carrier = 'USPS'
+    elif re.match(ups, tracking_number) != None:
+        link = TRACKING_NUMBER_CARD_URLS["ups"]
+        carrier = 'UPS'
+    elif re.match(fedex, tracking_number) != None:
+        link = TRACKING_NUMBER_CARD_URLS["fedex"]
+        carrier = 'FedEx'
     else:
-        if email_domain == EMAIL_DOMAIN_UPS:
-            link = TRACKING_NUMBER_CARD_URLS["ups"]
-            carrier = "UPS"
-        elif email_domain == EMAIL_DOMAIN_FEDEX:
+        # try one more time
+        if (isNumber and (length == 12 or length == 15 or length == 20)):
             link = TRACKING_NUMBER_CARD_URLS["fedex"]
             carrier = "FedEx"
-        elif email_domain == EMAIL_DOMAIN_USPS:
-            link = TRACKING_NUMBER_CARD_URLS["usps"]
+        elif (isNumber and length == 22):
+            link = TRACKING_NUMBER_CARD_URLS["usp"]
             carrier = "USPS"
-        elif email_domain == EMAIL_DOMAIN_DHL:
-            link = TRACKING_NUMBER_CARD_URLS["dhl"]
+        elif (length > 25):
+            link = TRACKING_NUMBER_CARD_URLS["dh"]
             carrier = "DHL"
-        elif email_domain == EMAIL_DOMAIN_SWISS_POST:
-            link = TRACKING_NUMBER_CARD_URLS["swiss_post"]
-            carrier = "Swiss Post"
         else:
-            if (isNumber and (length == 12 or length == 15 or length == 20)):
-                link = TRACKING_NUMBER_CARD_URLS["fedex"]
-                carrier = "FedEx"
-            elif (isNumber and length == 22):
-              link = TRACKING_NUMBER_CARD_URLS["usp"]
-              carrier = "USPS"
-            elif (length > 25):
-                link = TRACKING_NUMBER_CARD_URLS["dh"]
-                carrier = "DHL"
-            else:
-                link = TRACKING_NUMBER_CARD_URLS["unknown"]
-                carrier = email_domain
+            link = TRACKING_NUMBER_CARD_URLS["unknown"]
+            carrier = email_domain
 
     return {
         'tracking_number': tracking_number,
@@ -183,14 +210,19 @@ class EmailEntity(Entity):
         self.password = config[CONF_PASSWORD]
         self.email_folder = config[CONF_EMAIL_FOLDER]
         self.ssl = config[CONF_SSL]
+        self.days_old = int(config[CONF_DAYS_OLD])
 
-        self.flag = 'ALL' if config[CONF_SHOW_ALL] else 'UNSEEN'
+        self.flag = [u'SINCE', date.today() - timedelta(days=self.days_old)]
 
     def update(self):
         """Update data from Email API."""
         self._attr = {
             ATTR_TRACKING_NUMBERS: {}
         }
+
+        # update to current day
+        self.flag = [u'SINCE', date.today() - timedelta(days=self.days_old)]
+        _LOGGER.debug(f'flag: {self.flag}')
 
         emails = []
         server = IMAPClient(self.imap_server, use_uid=True, ssl=self.ssl)
@@ -230,11 +262,11 @@ class EmailEntity(Entity):
                 email_from = list(email_from)
                 email_from = ''.join(list(email_from[0]))
 
+            # run through all parsers for each email if email domain matches
             for ATTR, EMAIL_DOMAIN, parser in parsers:
                 try:
                     if EMAIL_DOMAIN in email_from:
-                        self._attr[ATTR_TRACKING_NUMBERS][ATTR] = self._attr[ATTR_TRACKING_NUMBERS][ATTR] + parser(
-                            email=email)
+                        self._attr[ATTR_TRACKING_NUMBERS][ATTR] = self._attr[ATTR_TRACKING_NUMBERS][ATTR] + parser(email=email)
                 except Exception as err:
                     _LOGGER.error('{} error: {}'.format(ATTR, err))
 
