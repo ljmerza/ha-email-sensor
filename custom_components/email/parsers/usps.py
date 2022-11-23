@@ -7,7 +7,7 @@ from ..const import EMAIL_ATTR_BODY
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_USPS = 'usps'
-EMAIL_DOMAIN_USPS = 'usps.com'
+EMAIL_DOMAIN_USPS = 'usps.gov'
 
 
 def parse_usps(email):
