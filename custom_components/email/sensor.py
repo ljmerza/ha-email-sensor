@@ -151,6 +151,9 @@ def find_carrier(tracking_number, email_domain):
     elif email_domain == EMAIL_DOMAIN_FEDEX:
         link = TRACKING_NUMBER_CARD_URLS["fedex"]
         carrier = "FedEx"
+    elif email_domain == EMAIL_DOMAIN_AMAZON:
+        link = TRACKING_NUMBER_CARD_URLS["amazon"]
+        carrier = "Amazon"    
     elif email_domain == EMAIL_DOMAIN_USPS:
         link = TRACKING_NUMBER_CARD_URLS["usps"]
         carrier = "USPS"
