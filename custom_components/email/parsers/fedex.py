@@ -3,7 +3,7 @@ import re
 
 from bs4 import BeautifulSoup
 from ..const import EMAIL_ATTR_BODY
-
+from ..const import EMAIL_ATTR_SUBJECT
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_FEDEX = 'fedex'
@@ -22,5 +22,9 @@ def parse_fedex(email):
         match = re.search('tracknumbers=(.*?)&clienttype', link)
         if match and match.group(1) not in tracking_numbers:
             tracking_numbers.append(match.group(1))
-
+    
+    match = re.search('FedEx Shipment (.*?): Your package is on its way', email[EMAIL_ATTR_SUBJECT])
+    if match and match.group(1) not in tracking_numbers:
+        tracking_numbers.append(match.group(1))
+    
     return tracking_numbers

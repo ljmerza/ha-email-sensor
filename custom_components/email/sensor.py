@@ -18,6 +18,7 @@ from .const import (
     EMAIL_ATTR_BODY)
 
 from .parsers.ups import ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups
+from .parsers.amazon import ATTR_AMAZON, EMAIL_DOMAIN_AMAZON, parse_amazon
 from .parsers.fedex import ATTR_FEDEX, EMAIL_DOMAIN_FEDEX, parse_fedex
 from .parsers.paypal import ATTR_PAYPAL, EMAIL_DOMAIN_PAYPAL, parse_paypal
 from .parsers.usps import ATTR_USPS, EMAIL_DOMAIN_USPS, parse_usps
@@ -54,6 +55,7 @@ from .parsers.target import ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
     (ATTR_FEDEX, EMAIL_DOMAIN_FEDEX, parse_fedex),
+    (ATTR_AMAZON, EMAIL_DOMAIN_AMAZON, parse_amazon),
     (ATTR_PAYPAL, EMAIL_DOMAIN_PAYPAL, parse_paypal),
     (ATTR_USPS, EMAIL_DOMAIN_USPS, parse_usps),
     (ATTR_ALI_EXPRESS, EMAIL_DOMAIN_ALI_EXPRESS, parse_ali_express),
@@ -106,6 +108,7 @@ TRACKING_NUMBER_CARD_URLS = {
   'ups': "https://www.ups.com/track?loc=en_US&tracknum=",
   'usps': "https://tools.usps.com/go/TrackConfirmAction?tLabels=",
   'fedex': "https://www.fedex.com/apps/fedextrack/?tracknumbers=",
+  'amazon': "https://www.amazon.com/progress-tracker/package/ref=ppx_yo_mob_b_track_package_o0?_encoding=UTF8&itemId=jllnttlrtiqoqo&orderId=",
   'dhl': 'https://www.logistics.dhl/us-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=',
   'swiss_post': 'https://www.swisspost.ch/track?formattedParcelCodes=',
   'unknown': 'https://www.google.com/search?q=',
@@ -180,8 +183,18 @@ def find_carrier(tracking_number, email_domain):
             link = TRACKING_NUMBER_CARD_URLS["dh"]
             carrier = "DHL"
         else:
-            link = TRACKING_NUMBER_CARD_URLS["unknown"]
-            carrier = email_domain
+            if (isNumber and (length == 12 or length == 15 or length == 20)):
+                link = TRACKING_NUMBER_CARD_URLS["fedex"]
+                carrier = "FedEx"
+            elif (isNumber and length == 22):
+              link = TRACKING_NUMBER_CARD_URLS["usps"]
+              carrier = "USPS"
+            elif (length > 25):
+                link = TRACKING_NUMBER_CARD_URLS["dh"]
+                carrier = "DHL"
+            else:
+                link = TRACKING_NUMBER_CARD_URLS["unknown"]
+                carrier = email_domain
 
     return {
         'tracking_number': tracking_number,
@@ -239,6 +252,7 @@ class EmailEntity(Entity):
             for uid, message_data in server.fetch(messages, 'RFC822').items():
                 try:
                     mail = parse_from_bytes(message_data[b'RFC822'])
+                    
                     emails.append({
                         EMAIL_ATTR_FROM: mail.from_,
                         EMAIL_ATTR_SUBJECT: mail.subject,
