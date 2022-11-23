@@ -19,7 +19,11 @@ def parse_rockauto(email):
     for link in links:
         if not link:
             continue
+        
         match = re.search('tracknumbers=(.*?)$', link)
+        if not match:
+            match = re.search('trknbr=(.*?)$', link)
+
         if match and match.group(1) not in tracking_numbers:
             tracking_numbers.append(match.group(1))
 

@@ -4,6 +4,7 @@ Gets emails from IMAP and parses out any tracking numbers. Goes well with the [t
 
 Supported Emails
 
+- Adam & Eve
 - Ali Express
 - B&H Photo
 - Bespoke Post
@@ -23,9 +24,11 @@ Supported Emails
 - Nuleaf
 - Paypal
 - Philips Hue
+- Prusa
 - Reolink
 - Rockauto
 - Swiss Post
+- Target
 - Timeless
 - UPS
 - USPS
@@ -67,6 +70,7 @@ sensor:
 | folder      | string  | **Optional** | `INBOX` Which folder to pull emails from                              |
 | show_all    | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder` |
 | ssl         | boolean | **Optional** | `true` enable or disable SSL when using IMAP                          |
+| days_old    | string  | **Optional** | `30` how many days of emails to retreive                              |
 
 ---
 
