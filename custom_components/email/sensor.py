@@ -12,7 +12,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
 from .const import (
-    CONF_EMAIL, CONF_PASSWORD, CONF_SHOW_ALL, CONF_IMAP_SERVER,
+    CONF_EMAIL, CONF_PASSWORD, CONF_IMAP_SERVER,
     CONF_IMAP_PORT, CONF_SSL, CONF_EMAIL_FOLDER, CONF_DAYS_OLD,
     ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT,
     EMAIL_ATTR_BODY)
@@ -96,105 +96,113 @@ SCAN_INTERVAL = timedelta(seconds=5*60)
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
-    vol.Required(CONF_DAYS_OLD, default='30'): cv.string,
+    vol.Required(CONF_DAYS_OLD, default='30'): cv.positive_int,
     vol.Required(CONF_IMAP_SERVER, default='imap.gmail.com'): cv.string,
     vol.Required(CONF_IMAP_PORT, default=993): cv.positive_int,
     vol.Required(CONF_SSL, default=True): cv.boolean,
     vol.Required(CONF_EMAIL_FOLDER, default='INBOX'): cv.string,
-    vol.Required(CONF_SHOW_ALL, default=False): cv.boolean,
 })
 
-TRACKING_NUMBER_CARD_URLS = {
+TRACKING_NUMBER_URLS = {
   'ups': "https://www.ups.com/track?loc=en_US&tracknum=",
   'usps': "https://tools.usps.com/go/TrackConfirmAction?tLabels=",
   'fedex': "https://www.fedex.com/apps/fedextrack/?tracknumbers=",
-  'amazon': "https://www.amazon.com/progress-tracker/package/ref=ppx_yo_mob_b_track_package_o0?_encoding=UTF8&itemId=jllnttlrtiqoqo&orderId=",
   'dhl': 'https://www.logistics.dhl/us-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=',
   'swiss_post': 'https://www.swisspost.ch/track?formattedParcelCodes=',
   'unknown': 'https://www.google.com/search?q=',
 }
 
+   
+usps_pattern = [
+    '^(94|93|92|94|95)[0-9]{20}$',
+    '^(94|93|92|94|95)[0-9]{22}$',
+    '^(70|14|23|03)[0-9]{14}$',
+    '^(M0|82)[0-9]{8}$',
+    '^([A-Z]{2})[0-9]{9}([A-Z]{2})$'
+]
+
+ups_pattern = [
+    '^(1Z)[0-9A-Z]{16}$',
+    '^(T)+[0-9A-Z]{10}$',
+    '^[0-9]{9}$',
+    '^[0-9]{26}$'
+]
+
+fedex_pattern = [
+    '^[0-9]{20}$',
+    '^[0-9]{15}$',
+    '^[0-9]{12}$',
+    '^[0-9]{22}$'
+]
+
+usps_regex = "(" + ")|(".join(usps_pattern) + ")"
+fedex_regex = "(" + ")|(".join(fedex_pattern) + ")"
+ups_regex = "(" + ")|(".join(ups_pattern) + ")"
+
 def find_carrier(tracking_number, email_domain):
+
+    # we may have the carrier/link already parsed from parser
+    if type(tracking_number) is dict:
+        return {
+            'tracking_number': tracking_number['tracking_number'],
+            'carrier': email_domain,
+            'origin': email_domain,
+            'link': tracking_number['link'],
+        }
+
     link = ""
     carrier = ""
-   
-    usps_pattern = [
-        '^(94|93|92|94|95)[0-9]{20}$',
-        '^(94|93|92|94|95)[0-9]{22}$',
-        '^(70|14|23|03)[0-9]{14}$',
-        '^(M0|82)[0-9]{8}$',
-        '^([A-Z]{2})[0-9]{9}([A-Z]{2})$'
-    ]
 
-    ups_pattern = [
-        '^(1Z)[0-9A-Z]{16}$',
-        '^(T)+[0-9A-Z]{10}$',
-        '^[0-9]{9}$',
-        '^[0-9]{26}$'
-    ]
-    
-    fedex_pattern = [
-        '^[0-9]{20}$',
-        '^[0-9]{15}$',
-        '^[0-9]{12}$',
-        '^[0-9]{22}$'
-    ]
-    
-    usps = "(" + ")|(".join(usps_pattern) + ")"
-    fedex = "(" + ")|(".join(fedex_pattern) + ")"
-    ups= "(" + ")|(".join(ups_pattern) + ")"
-    
+    # if tracking number is a url then use that
+    if tracking_number.startswith('http'):
+        link = tracking_number
+        carrier = email_domain
+
     # if from carrier themself then use that
-    if email_domain == EMAIL_DOMAIN_UPS:
-        link = TRACKING_NUMBER_CARD_URLS["ups"]
+    elif email_domain == EMAIL_DOMAIN_UPS:
+        link = TRACKING_NUMBER_URLS["ups"]
         carrier = "UPS"
     elif email_domain == EMAIL_DOMAIN_FEDEX:
-        link = TRACKING_NUMBER_CARD_URLS["fedex"]
+        link = TRACKING_NUMBER_URLS["fedex"]
         carrier = "FedEx"
     elif email_domain == EMAIL_DOMAIN_USPS:
-        link = TRACKING_NUMBER_CARD_URLS["usps"]
+        link = TRACKING_NUMBER_URLS["usps"]
         carrier = "USPS"
     elif email_domain == EMAIL_DOMAIN_DHL:
-        link = TRACKING_NUMBER_CARD_URLS["dhl"]
+        link = TRACKING_NUMBER_URLS["dhl"]
         carrier = "DHL"
     elif email_domain == EMAIL_DOMAIN_SWISS_POST:
-        link = TRACKING_NUMBER_CARD_URLS["swiss_post"]
+        link = TRACKING_NUMBER_URLS["swiss_post"]
         carrier = "Swiss Post"
     
     # regex tracking number
-    elif re.match(usps, tracking_number) != None:
-        link = TRACKING_NUMBER_CARD_URLS["usps"]
+    elif re.match(usps_regex, tracking_number) != None:
+        link = TRACKING_NUMBER_URLS["usps"]
         carrier = 'USPS'
-    elif re.match(ups, tracking_number) != None:
-        link = TRACKING_NUMBER_CARD_URLS["ups"]
+    elif re.match(ups_regex, tracking_number) != None:
+        link = TRACKING_NUMBER_URLS["ups"]
         carrier = 'UPS'
-    elif re.match(fedex, tracking_number) != None:
-        link = TRACKING_NUMBER_CARD_URLS["fedex"]
+    elif re.match(fedex_regex, tracking_number) != None:
+        link = TRACKING_NUMBER_URLS["fedex"]
         carrier = 'FedEx'
+        
+    # try one more time
     else:
-        # try one more time
+        isNumber = tracking_number.isnumeric()
+        length = len(tracking_number)
+
         if (isNumber and (length == 12 or length == 15 or length == 20)):
-            link = TRACKING_NUMBER_CARD_URLS["fedex"]
+            link = TRACKING_NUMBER_URLS["fedex"]
             carrier = "FedEx"
         elif (isNumber and length == 22):
-            link = TRACKING_NUMBER_CARD_URLS["usp"]
+            link = TRACKING_NUMBER_URLS["usps"]
             carrier = "USPS"
         elif (length > 25):
-            link = TRACKING_NUMBER_CARD_URLS["dh"]
+            link = TRACKING_NUMBER_URLS["dh"]
             carrier = "DHL"
         else:
-            if (isNumber and (length == 12 or length == 15 or length == 20)):
-                link = TRACKING_NUMBER_CARD_URLS["fedex"]
-                carrier = "FedEx"
-            elif (isNumber and length == 22):
-              link = TRACKING_NUMBER_CARD_URLS["usps"]
-              carrier = "USPS"
-            elif (length > 25):
-                link = TRACKING_NUMBER_CARD_URLS["dh"]
-                carrier = "DHL"
-            else:
-                link = TRACKING_NUMBER_CARD_URLS["unknown"]
-                carrier = email_domain
+            link = TRACKING_NUMBER_URLS["unknown"]
+            carrier = email_domain
 
     return {
         'tracking_number': tracking_number,
@@ -275,7 +283,7 @@ class EmailEntity(Entity):
             if isinstance(email_from, (list, tuple)):
                 email_from = list(email_from)
                 email_from = ''.join(list(email_from[0]))
-
+            
             # run through all parsers for each email if email domain matches
             for ATTR, EMAIL_DOMAIN, parser in parsers:
                 try:

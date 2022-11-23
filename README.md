@@ -5,6 +5,7 @@ Gets emails from IMAP and parses out any tracking numbers. Goes well with the [t
 Supported Emails
 
 - Adam & Eve
+- Amazon
 - Ali Express
 - B&H Photo
 - Bespoke Post
@@ -68,9 +69,8 @@ sensor:
 | imap_server | string  | **Optional** | `imap.gmail.com`  IMAP server address>                                |
 | imap_port   | number  | **Optional** | `993` IMAP port                                                       |
 | folder      | string  | **Optional** | `INBOX` Which folder to pull emails from                              |
-| show_all    | boolean | **Optional** | `false` Show only unseen emails (default) or all emails from `folder` |
 | ssl         | boolean | **Optional** | `true` enable or disable SSL when using IMAP                          |
-| days_old    | string  | **Optional** | `30` how many days of emails to retreive                              |
+| days_old    | number  | **Optional** | `30` how many days of emails to retrieve                              |
 
 ---
 
