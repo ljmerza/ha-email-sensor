@@ -15,7 +15,7 @@ from .const import (
     CONF_EMAIL, CONF_PASSWORD, CONF_IMAP_SERVER,
     CONF_IMAP_PORT, CONF_SSL, CONF_EMAIL_FOLDER, CONF_DAYS_OLD,
     ATTR_TRACKING_NUMBERS, EMAIL_ATTR_FROM, EMAIL_ATTR_SUBJECT,
-    EMAIL_ATTR_BODY)
+    EMAIL_ATTR_BODY, ATTR_COUNT)
 
 from .parsers.ups import ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups
 from .parsers.amazon import ATTR_AMAZON, EMAIL_DOMAIN_AMAZON, parse_amazon
@@ -224,7 +224,8 @@ class EmailEntity(Entity):
     def __init__(self, config):
         """Init the Email Entity."""
         self._attr = {
-            ATTR_TRACKING_NUMBERS: {}
+            ATTR_TRACKING_NUMBERS: {},
+	        ATTR_COUNT: []
         }
 
         self.imap_server = config[CONF_IMAP_SERVER]
@@ -240,7 +241,8 @@ class EmailEntity(Entity):
     def update(self):
         """Update data from Email API."""
         self._attr = {
-            ATTR_TRACKING_NUMBERS: {}
+            ATTR_TRACKING_NUMBERS: {},
+	        ATTR_COUNT: []
         }
 
         # update to current day
@@ -294,12 +296,14 @@ class EmailEntity(Entity):
                 except Exception as err:
                     _LOGGER.error('{} error: {}'.format(ATTR, err))
 
+        counter=0                    
         # remove duplicates
         for ATTR, EMAIL_DOMAIN, parser in parsers:
             tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
             if len(tracking_numbers) > 0 and isinstance(tracking_numbers[0], str):
                 self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
                     dict.fromkeys(tracking_numbers))
+                counter = counter + 1
 
         # format tracking numbers to add carrier type
         for ATTR, EMAIL_DOMAIN, parser in parsers:
@@ -307,6 +311,7 @@ class EmailEntity(Entity):
             self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(map(lambda x: find_carrier(x, EMAIL_DOMAIN), tracking_numbers))
             _LOGGER.debug(self._attr[ATTR_TRACKING_NUMBERS][ATTR])
 
+        self._attr[ATTR_COUNT] = counter
         server.logout()
 
     @property
