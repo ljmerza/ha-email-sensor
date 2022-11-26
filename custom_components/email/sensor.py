@@ -225,7 +225,7 @@ class EmailEntity(Entity):
         """Init the Email Entity."""
         self._attr = {
             ATTR_TRACKING_NUMBERS: {},
-	        ATTR_COUNT: []
+	        ATTR_COUNT: 0
         }
 
         self.imap_server = config[CONF_IMAP_SERVER]
@@ -242,7 +242,7 @@ class EmailEntity(Entity):
         """Update data from Email API."""
         self._attr = {
             ATTR_TRACKING_NUMBERS: {},
-	        ATTR_COUNT: []
+	        ATTR_COUNT: 0
         }
 
         # update to current day
@@ -296,7 +296,7 @@ class EmailEntity(Entity):
                 except Exception as err:
                     _LOGGER.error('{} error: {}'.format(ATTR, err))
 
-        counter=0                    
+        counter = 0                    
         # remove duplicates
         for ATTR, EMAIL_DOMAIN, parser in parsers:
             tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
@@ -322,12 +322,11 @@ class EmailEntity(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._attr.get('count', 0)
+        return self._attr[ATTR_COUNT]
 
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
-        _LOGGER.debug(self._attr)
         return self._attr
 
     @property
