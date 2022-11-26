@@ -16,7 +16,8 @@ Supported Emails
 - DSW
 - eBay
 - FedEx
-- Georgia Power 
+- Gamestop
+- Georgia Power
 - Google Express
 - Groupon
 - Manta Sleep

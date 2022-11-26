@@ -50,6 +50,7 @@ from .parsers.manta_sleep import ATTR_MANTA_SLEEP, EMAIL_DOMAIN_MANTA_SLEEP, par
 from .parsers.prusa import ATTR_PRUSA, EMAIL_DOMAIN_PRUSA, parse_prusa
 from .parsers.adam_eve import ATTR_ADAM_AND_EVE, EMAIL_DOMAIN_ADAM_AND_EVE, parse_adam_and_eve
 from .parsers.target import ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target
+from .parsers.gamestop import ATTR_GAMESTOP, EMAIL_DOMAIN_GAMESTOP, parse_gamestop
 
 
 parsers = [
@@ -86,6 +87,7 @@ parsers = [
     (ATTR_PRUSA, EMAIL_DOMAIN_PRUSA, parse_prusa),
     (ATTR_ADAM_AND_EVE, EMAIL_DOMAIN_ADAM_AND_EVE, parse_adam_and_eve),
     (ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target),
+    (ATTR_GAMESTOP, EMAIL_DOMAIN_GAMESTOP, parse_gamestop),
 ]
 
 _LOGGER = logging.getLogger(__name__)
