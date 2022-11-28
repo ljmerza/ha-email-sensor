@@ -303,7 +303,7 @@ class EmailEntity(Entity):
             if len(tracking_numbers) > 0 and isinstance(tracking_numbers[0], str):
                 self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
                     dict.fromkeys(tracking_numbers))
-                counter = counter + 1
+                counter = counter + len(tracking_numbers)
 
         # format tracking numbers to add carrier type
         for ATTR, EMAIL_DOMAIN, parser in parsers:
