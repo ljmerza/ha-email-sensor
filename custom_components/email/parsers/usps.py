@@ -21,5 +21,8 @@ def parse_usps(email):
         match = re.search('selectedTrckNum=(.*?)&selectedTypeOfLabel', link)
         if match and match.group(1) not in tracking_numbers:
             tracking_numbers.append(match.group(1))
+        match = re.search('tLabels=(.*?)&', link)
+        if match and match.group(1) not in tracking_numbers:
+            tracking_numbers.append(match.group(1))
 
     return tracking_numbers
