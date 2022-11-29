@@ -6,12 +6,12 @@ from ..const import EMAIL_ATTR_BODY
 
 
 _LOGGER = logging.getLogger(__name__)
-ATTR_BEST_BUY = 'best_buy'
-EMAIL_DOMAIN_BEST_BUY = 'bestbuy.com'
+ATTR_LITTER_ROBOT= 'litter_robot'
+EMAIL_DOMAIN_LITTER_ROBOT = 'litter-robot.com'
 
 
-def parse_best_buy(email):
-    """Parse Best Buy tracking numbers."""
+def parse_litter_robot(email):
+    """Parse Litter Robot tracking numbers."""
     tracking_numbers = []
 
     soup = BeautifulSoup(email[EMAIL_ATTR_BODY], 'html.parser')
@@ -20,7 +20,7 @@ def parse_best_buy(email):
         link = element.get('href')
         if not link:
             continue
-        if 'shipment/tracking' in link:
+        if 'shipping/tracking' in link:
             tracking_number = element.text
             if tracking_number and tracking_number not in tracking_numbers:
                 tracking_numbers.append(tracking_number.strip())
