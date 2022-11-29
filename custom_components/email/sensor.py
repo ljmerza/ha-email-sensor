@@ -303,13 +303,14 @@ class EmailEntity(Entity):
             if len(tracking_numbers) > 0 and isinstance(tracking_numbers[0], str):
                 self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
                     dict.fromkeys(tracking_numbers))
-                counter = counter + 1
+                
 
         # format tracking numbers to add carrier type
         for ATTR, EMAIL_DOMAIN, parser in parsers:
             tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
             self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(map(lambda x: find_carrier(x, EMAIL_DOMAIN), tracking_numbers))
             _LOGGER.debug(self._attr[ATTR_TRACKING_NUMBERS][ATTR])
+	    counter = counter + len(tracking_numbers)
 
         self._attr[ATTR_COUNT] = counter
         server.logout()
