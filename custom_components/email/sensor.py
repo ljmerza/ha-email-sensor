@@ -310,7 +310,7 @@ class EmailEntity(Entity):
             tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
             self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(map(lambda x: find_carrier(x, EMAIL_DOMAIN), tracking_numbers))
             _LOGGER.debug(self._attr[ATTR_TRACKING_NUMBERS][ATTR])
-	    counter = counter + len(tracking_numbers)
+        counter = counter + len(tracking_numbers)
 
         self._attr[ATTR_COUNT] = counter
         server.logout()
