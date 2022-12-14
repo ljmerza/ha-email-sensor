@@ -52,6 +52,7 @@ from .parsers.adam_eve import ATTR_ADAM_AND_EVE, EMAIL_DOMAIN_ADAM_AND_EVE, pars
 from .parsers.target import ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target
 from .parsers.gamestop import ATTR_GAMESTOP, EMAIL_DOMAIN_GAMESTOP, parse_gamestop
 from .parsers.litter_robot import ATTR_LITTER_ROBOT, EMAIL_DOMAIN_LITTER_ROBOT, parse_litter_robot
+from .parsers.the_smartest_house import ATTR_SMARTEST_HOUSE, EMAIL_DOMAIN_SMARTEST_HOUSE, parse_smartest_house
 
 
 parsers = [
@@ -90,6 +91,7 @@ parsers = [
     (ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target),
     (ATTR_GAMESTOP, EMAIL_DOMAIN_GAMESTOP, parse_gamestop),
     (ATTR_LITTER_ROBOT, EMAIL_DOMAIN_LITTER_ROBOT, parse_litter_robot),
+    (ATTR_SMARTEST_HOUSE, EMAIL_DOMAIN_SMARTEST_HOUSE, parse_smartest_house),
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -305,15 +307,14 @@ class EmailEntity(Entity):
             if len(tracking_numbers) > 0 and isinstance(tracking_numbers[0], str):
                 self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
                     dict.fromkeys(tracking_numbers))
-                
 
         # format tracking numbers to add carrier type
         for ATTR, EMAIL_DOMAIN, parser in parsers:
             tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
             self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(map(lambda x: find_carrier(x, EMAIL_DOMAIN), tracking_numbers))
             _LOGGER.debug(self._attr[ATTR_TRACKING_NUMBERS][ATTR])
-	    counter = counter + len(tracking_numbers)
-
+            counter = counter + len(tracking_numbers)
+        
         self._attr[ATTR_COUNT] = counter
         server.logout()
 

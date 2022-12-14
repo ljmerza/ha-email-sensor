@@ -33,6 +33,7 @@ Supported Emails
 - Swiss Post
 - Target
 - Timeless
+- The Smartest House
 - UPS
 - USPS
 - Wyze
