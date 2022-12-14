@@ -20,6 +20,7 @@ Supported Emails
 - Georgia Power
 - Google Express
 - Groupon
+- Litter Robot
 - Manta Sleep
 - Monoprice
 - NewEgg
@@ -32,6 +33,7 @@ Supported Emails
 - Swiss Post
 - Target
 - Timeless
+- The Smartest House
 - UPS
 - USPS
 - Wyze

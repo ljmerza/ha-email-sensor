@@ -51,6 +51,8 @@ from .parsers.prusa import ATTR_PRUSA, EMAIL_DOMAIN_PRUSA, parse_prusa
 from .parsers.adam_eve import ATTR_ADAM_AND_EVE, EMAIL_DOMAIN_ADAM_AND_EVE, parse_adam_and_eve
 from .parsers.target import ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target
 from .parsers.gamestop import ATTR_GAMESTOP, EMAIL_DOMAIN_GAMESTOP, parse_gamestop
+from .parsers.litter_robot import ATTR_LITTER_ROBOT, EMAIL_DOMAIN_LITTER_ROBOT, parse_litter_robot
+from .parsers.the_smartest_house import ATTR_SMARTEST_HOUSE, EMAIL_DOMAIN_SMARTEST_HOUSE, parse_smartest_house
 
 
 parsers = [
@@ -88,6 +90,8 @@ parsers = [
     (ATTR_ADAM_AND_EVE, EMAIL_DOMAIN_ADAM_AND_EVE, parse_adam_and_eve),
     (ATTR_TARGET, EMAIL_DOMAIN_TARGET, parse_target),
     (ATTR_GAMESTOP, EMAIL_DOMAIN_GAMESTOP, parse_gamestop),
+    (ATTR_LITTER_ROBOT, EMAIL_DOMAIN_LITTER_ROBOT, parse_litter_robot),
+    (ATTR_SMARTEST_HOUSE, EMAIL_DOMAIN_SMARTEST_HOUSE, parse_smartest_house),
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -178,13 +182,13 @@ def find_carrier(tracking_number, email_domain):
         carrier = "Swiss Post"
     
     # regex tracking number
-    elif re.match(usps_regex, tracking_number) != None:
+    elif re.search(usps_regex, tracking_number) != None:
         link = TRACKING_NUMBER_URLS["usps"]
         carrier = 'USPS'
-    elif re.match(ups_regex, tracking_number) != None:
+    elif re.search(ups_regex, tracking_number) != None:
         link = TRACKING_NUMBER_URLS["ups"]
         carrier = 'UPS'
-    elif re.match(fedex_regex, tracking_number) != None:
+    elif re.search(fedex_regex, tracking_number) != None:
         link = TRACKING_NUMBER_URLS["fedex"]
         carrier = 'FedEx'
         
@@ -200,7 +204,7 @@ def find_carrier(tracking_number, email_domain):
             link = TRACKING_NUMBER_URLS["usps"]
             carrier = "USPS"
         elif (length > 25):
-            link = TRACKING_NUMBER_URLS["dh"]
+            link = TRACKING_NUMBER_URLS["dhl"]
             carrier = "DHL"
         else:
             link = TRACKING_NUMBER_URLS["unknown"]
@@ -303,7 +307,6 @@ class EmailEntity(Entity):
             if len(tracking_numbers) > 0 and isinstance(tracking_numbers[0], str):
                 self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(
                     dict.fromkeys(tracking_numbers))
-                
 
         # format tracking numbers to add carrier type
         for ATTR, EMAIL_DOMAIN, parser in parsers:
