@@ -254,7 +254,7 @@ class EmailEntity(Entity):
         _LOGGER.debug(f'flag: {self.flag}')
 
         emails = []
-        server = IMAPClient(self.imap_server, use_uid=True, ssl=self.ssl)
+        server = IMAPClient(self.imap_server, port=self.imap_port, use_uid=True, ssl=self.ssl)
 
         try:
             server.login(self.email_address, self.password)
