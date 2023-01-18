@@ -24,8 +24,10 @@ Supported Emails
 - Manta Sleep
 - Monoprice
 - NewEgg
+- Nintendo
 - Nuleaf
 - Paypal
+- Pledge Box
 - Philips Hue
 - Prusa
 - Reolink
@@ -34,6 +36,7 @@ Supported Emails
 - Target
 - Timeless
 - The Smartest House
+- Ubiquiti
 - UPS
 - USPS
 - Wyze
