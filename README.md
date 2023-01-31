@@ -20,6 +20,7 @@ Supported Emails
 - Georgia Power
 - Google Express
 - Groupon
+- Guitar Center
 - Litter Robot
 - Manta Sleep
 - Monoprice
