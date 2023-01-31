@@ -20,7 +20,6 @@ def parse_pledgebox(email):
         if not line:
             continue
         match = re.search('^(\d{12})$', line)
-        _LOGGER.error(match)
 
         if match and match.group(1) not in tracking_numbers:
             tracking_numbers.append(match.group(1))
