@@ -33,6 +33,7 @@ Supported Emails
 - Prusa
 - Reolink
 - Rockauto
+- Sony
 - Swiss Post
 - Target
 - Timeless
