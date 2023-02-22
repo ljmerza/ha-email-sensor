@@ -16,11 +16,9 @@ def parse_guitar_center(email):
     soup = BeautifulSoup(email[EMAIL_ATTR_BODY], 'html.parser')
     elements = [element for element in soup.find_all('td')]
     for element in elements:
-        _LOGGER.error(element.text)
         if 'Tracking:' in element.text:
             tracking_link = element.find("a", recursive=False)
             tracking_number = tracking_link.text
-            _LOGGER.error(tracking_number)
             if tracking_number not in tracking_numbers:
                 tracking_numbers.append(tracking_number)
 

@@ -23,4 +23,10 @@ def parse_wyze(email):
         if match and match.group(1) not in tracking_numbers:
             tracking_numbers.append(match.group(1))
 
+    matches = re.findall(r'tracking_numbers=(.*?)&', email[EMAIL_ATTR_BODY])
+    for tracking_number in matches:
+        if tracking_number not in tracking_numbers:
+            tracking_numbers.append(tracking_number)
+
+
     return tracking_numbers

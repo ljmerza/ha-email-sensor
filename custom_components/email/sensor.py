@@ -57,6 +57,7 @@ from .parsers.ubiquiti import ATTR_UBIQUITI, EMAIL_DOMAIN_UBIQUITI, parse_ubiqui
 from .parsers.nintendo import ATTR_NINTENDO, EMAIL_DOMAIN_NINTENDO, parse_nintendo
 from .parsers.pledgebox import ATTR_PLEDGEBOX, EMAIL_DOMAIN_PLEDGEBOX, parse_pledgebox
 from .parsers.guitar_center import ATTR_GUITAR_CENTER, EMAIL_DOMAIN_GUITAR_CENTER, parse_guitar_center
+from .parsers.sony import ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony
 
 
 parsers = [
@@ -100,6 +101,7 @@ parsers = [
     (ATTR_NINTENDO, EMAIL_DOMAIN_NINTENDO, parse_nintendo),
     (ATTR_PLEDGEBOX, EMAIL_DOMAIN_PLEDGEBOX, parse_pledgebox),
     (ATTR_GUITAR_CENTER, EMAIL_DOMAIN_GUITAR_CENTER, parse_guitar_center),
+    (ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony),
 ]
 
 _LOGGER = logging.getLogger(__name__)
