@@ -58,6 +58,8 @@ from .parsers.nintendo import ATTR_NINTENDO, EMAIL_DOMAIN_NINTENDO, parse_ninten
 from .parsers.pledgebox import ATTR_PLEDGEBOX, EMAIL_DOMAIN_PLEDGEBOX, parse_pledgebox
 from .parsers.guitar_center import ATTR_GUITAR_CENTER, EMAIL_DOMAIN_GUITAR_CENTER, parse_guitar_center
 from .parsers.sony import ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony
+from .parsers.sylvane import ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane
+from .parsers.adafruit import ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit
 
 
 parsers = [
@@ -102,6 +104,8 @@ parsers = [
     (ATTR_PLEDGEBOX, EMAIL_DOMAIN_PLEDGEBOX, parse_pledgebox),
     (ATTR_GUITAR_CENTER, EMAIL_DOMAIN_GUITAR_CENTER, parse_guitar_center),
     (ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony),
+    (ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane),
+    (ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit),
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -156,6 +160,7 @@ fedex_regex = "(" + ")|(".join(fedex_pattern) + ")"
 ups_regex = "(" + ")|(".join(ups_pattern) + ")"
 
 def find_carrier(tracking_number, email_domain):
+    _LOGGER.debug(f'find_carrier email_domain: {email_domain}')
 
     # we may have the carrier/link already parsed from parser
     if type(tracking_number) is dict:
@@ -298,12 +303,14 @@ class EmailEntity(Entity):
         # for each email run each parser and save in the corresponding ATTR
         for email in emails:
             email_from = email[EMAIL_ATTR_FROM]
+            _LOGGER.debug(f'parsing email from {email_from}')
             if isinstance(email_from, (list, tuple)):
                 email_from = list(email_from)
                 email_from = ''.join(list(email_from[0]))
             
             # run through all parsers for each email if email domain matches
             for ATTR, EMAIL_DOMAIN, parser in parsers:
+                _LOGGER.debug(f'parsing email for parser {EMAIL_DOMAIN}')
                 try:
                     if EMAIL_DOMAIN in email_from:
                         self._attr[ATTR_TRACKING_NUMBERS][ATTR] = self._attr[ATTR_TRACKING_NUMBERS][ATTR] + parser(email=email)
@@ -320,6 +327,7 @@ class EmailEntity(Entity):
 
         # format tracking numbers to add carrier type
         for ATTR, EMAIL_DOMAIN, parser in parsers:
+            _LOGGER.debug(f'parsing tracking numbers for {EMAIL_DOMAIN}')
             tracking_numbers = self._attr[ATTR_TRACKING_NUMBERS][ATTR]
             self._attr[ATTR_TRACKING_NUMBERS][ATTR] = list(map(lambda x: find_carrier(x, EMAIL_DOMAIN), tracking_numbers))
             _LOGGER.debug(self._attr[ATTR_TRACKING_NUMBERS][ATTR])

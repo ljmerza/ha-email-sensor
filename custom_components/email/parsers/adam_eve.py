@@ -15,9 +15,6 @@ def parse_adam_and_eve(email):
     tracking_numbers = []
 
     soup = BeautifulSoup(email[EMAIL_ATTR_BODY], 'html.parser')
-    paragraphs = soup.find_all('p')
-
-    soup = BeautifulSoup(email[EMAIL_ATTR_BODY], 'html.parser')
     linkTexts = [link.text for link in soup.find_all('a')]
     for linkText in linkTexts:
         if not linkText:

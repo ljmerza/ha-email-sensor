@@ -4,6 +4,7 @@ Gets emails from IMAP and parses out any tracking numbers. Goes well with the [t
 
 Supported Emails
 
+- Adafruit
 - Adam & Eve
 - Amazon
 - Ali Express
@@ -33,6 +34,7 @@ Supported Emails
 - Prusa
 - Reolink
 - Rockauto
+- Sylvane
 - Sony
 - Swiss Post
 - Target

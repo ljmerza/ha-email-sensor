@@ -20,7 +20,7 @@ def parse_newegg(email):
     for link in link_urls:
         if not link:
             continue
-        match = re.search('TrackingNumber=(.*?)&type=0', link)
+        match = re.search('TrackingNumber=(.*?)&', link)
         if match and match.group(1) not in tracking_numbers:
             tracking_numbers.append(match.group(1))
 
