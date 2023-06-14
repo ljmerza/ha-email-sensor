@@ -61,6 +61,8 @@ from .parsers.sony import ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony
 from .parsers.sylvane import ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane
 from .parsers.adafruit import ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit
 
+from .parsers.generic import ATTR_GENERIC, EMAIL_DOMAIN_GENERIC, parse_generic
+
 
 parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
@@ -106,12 +108,14 @@ parsers = [
     (ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony),
     (ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane),
     (ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit),
+
+    (ATTR_GENERIC, EMAIL_DOMAIN_GENERIC, parse_generic),
 ]
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'email'
-SCAN_INTERVAL = timedelta(seconds=5*60)
+SCAN_INTERVAL = timedelta(seconds=30*60)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
@@ -160,15 +164,15 @@ fedex_regex = "(" + ")|(".join(fedex_pattern) + ")"
 ups_regex = "(" + ")|(".join(ups_pattern) + ")"
 
 def find_carrier(tracking_number, email_domain):
-    _LOGGER.debug(f'find_carrier email_domain: {email_domain}')
+    _LOGGER.debug(f'find_carrier email_domain: {email_domain} {tracking_number}')
 
     # we may have the carrier/link already parsed from parser
     if type(tracking_number) is dict:
         return {
-            'tracking_number': tracking_number['tracking_number'],
+            'tracking_number': tracking_number.get('tracking_number', ''),
             'carrier': email_domain,
             'origin': email_domain,
-            'link': tracking_number['link'],
+            'link': tracking_number.get('link', ''),
         }
 
     link = ""

@@ -2,7 +2,7 @@ import logging
 import re
 
 from bs4 import BeautifulSoup
-from ..const import EMAIL_ATTR_BODY
+from ..const import EMAIL_ATTR_BODY, USPS_TRACKING_NUMBER_REGEX
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -23,5 +23,10 @@ def parse_pledgebox(email):
 
         if match and match.group(1) not in tracking_numbers:
             tracking_numbers.append(match.group(1))
+
+    matches = re.findall(USPS_TRACKING_NUMBER_REGEX, email[EMAIL_ATTR_BODY])
+    for tracking_number in matches:
+        if tracking_number not in tracking_numbers:
+            tracking_numbers.append(tracking_number)
 
     return tracking_numbers
