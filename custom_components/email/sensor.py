@@ -19,6 +19,7 @@ from .const import (
 
 from .parsers.ups import ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups
 from .parsers.amazon import ATTR_AMAZON, EMAIL_DOMAIN_AMAZON, parse_amazon
+from .parsers.amazon_de import ATTR_AMAZON_DE, EMAIL_DOMAIN_AMAZON_DE, parse_amazon_de
 from .parsers.fedex import ATTR_FEDEX, EMAIL_DOMAIN_FEDEX, parse_fedex
 from .parsers.paypal import ATTR_PAYPAL, EMAIL_DOMAIN_PAYPAL, parse_paypal
 from .parsers.usps import ATTR_USPS, EMAIL_DOMAIN_USPS, parse_usps
@@ -68,6 +69,7 @@ parsers = [
     (ATTR_UPS, EMAIL_DOMAIN_UPS, parse_ups),
     (ATTR_FEDEX, EMAIL_DOMAIN_FEDEX, parse_fedex),
     (ATTR_AMAZON, EMAIL_DOMAIN_AMAZON, parse_amazon),
+    (ATTR_AMAZON_DE, EMAIL_DOMAIN_AMAZON_DE, parse_amazon_de),
     (ATTR_PAYPAL, EMAIL_DOMAIN_PAYPAL, parse_paypal),
     (ATTR_USPS, EMAIL_DOMAIN_USPS, parse_usps),
     (ATTR_ALI_EXPRESS, EMAIL_DOMAIN_ALI_EXPRESS, parse_ali_express),
