@@ -29,4 +29,4 @@ def parse_generic(email):
         if tracking_number not in tracking_numbers:
             tracking_numbers.append(tracking_number)
 
-    return tracking_numbers,
+    return tracking_numbers
