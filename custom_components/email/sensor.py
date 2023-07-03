@@ -61,6 +61,7 @@ from .parsers.guitar_center import ATTR_GUITAR_CENTER, EMAIL_DOMAIN_GUITAR_CENTE
 from .parsers.sony import ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony
 from .parsers.sylvane import ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane
 from .parsers.adafruit import ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit
+from .parsers.thriftbooks import ATTR_THRIFT_BOOKS, EMAIL_DOMAIN_THRIFT_BOOKS, parse_thrift_books
 
 from .parsers.generic import ATTR_GENERIC, EMAIL_DOMAIN_GENERIC, parse_generic
 
@@ -110,7 +111,7 @@ parsers = [
     (ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony),
     (ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane),
     (ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit),
-
+    (ATTR_THRIFT_BOOKS, EMAIL_DOMAIN_THRIFT_BOOKS, parse_thrift_books),
     (ATTR_GENERIC, EMAIL_DOMAIN_GENERIC, parse_generic),
 ]
 
@@ -234,7 +235,7 @@ def find_carrier(tracking_number, email_domain):
     return {
         'tracking_number': tracking_number,
         'carrier': carrier,
-        'origin': email_domain,
+        'origin': email_domain or carrier,
         'link': f'{link}{tracking_number}',
     }
 

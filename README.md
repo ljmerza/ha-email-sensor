@@ -38,6 +38,7 @@ Supported Emails
 - Sony
 - Swiss Post
 - Target
+- Thriftbooks
 - Timeless
 - The Smartest House
 - Ubiquiti

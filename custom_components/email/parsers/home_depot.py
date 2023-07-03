@@ -11,6 +11,9 @@ ATTR_HOME_DEPOT = 'home_depot'
 EMAIL_DOMAIN_HOME_DEPOT = 'homedepot.com'
 
 
+track_copy_pattern = re.compile(r"track my order", re.IGNORECASE)
+order_number_pattern = re.compile(r"^[A-Za-z]{2}\d{8}$")
+
 def parse_home_depot(email):
     """Parse home depot tracking numbers."""
     tracking_numbers = []
@@ -27,15 +30,14 @@ def parse_home_depot(email):
         if 'link.order.homedepot.com' not in link:
             continue
 
-        try:
-            tracking_number = element.text
-            isNan = math.isnan(int(tracking_number))
+        match = re.search(order_number_pattern, element.text)
 
-            stripped_number = tracking_number.rstrip()
+        if match:
+            tracking_numbers.append({
+                'link': link,
+                'tracking_number': match.group()
+            })
 
-            if not isNan and stripped_number not in tracking_numbers:
-                tracking_numbers.append(stripped_number)
-        except:
-            pass
 
+    _LOGGER.error({ "tracking_numbers" : tracking_numbers})
     return tracking_numbers
