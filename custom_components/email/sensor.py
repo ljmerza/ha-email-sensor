@@ -62,6 +62,7 @@ from .parsers.sony import ATTR_SONY, EMAIL_DOMAIN_SONY, parse_sony
 from .parsers.sylvane import ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane
 from .parsers.adafruit import ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit
 from .parsers.thriftbooks import ATTR_THRIFT_BOOKS, EMAIL_DOMAIN_THRIFT_BOOKS, parse_thrift_books
+from .parsers.lowes import ATTR_LOWES, EMAIL_DOMAIN_LOWES, parse_lowes
 
 from .parsers.generic import ATTR_GENERIC, EMAIL_DOMAIN_GENERIC, parse_generic
 
@@ -112,6 +113,8 @@ parsers = [
     (ATTR_SYLVANE, EMAIL_DOMAIN_SYLVANE, parse_sylvane),
     (ATTR_ADAFRUIT, EMAIL_DOMAIN_ADAFRUIT, parse_adafruit),
     (ATTR_THRIFT_BOOKS, EMAIL_DOMAIN_THRIFT_BOOKS, parse_thrift_books),
+    (ATTR_LOWES, EMAIL_DOMAIN_LOWES, parse_lowes),
+    
     (ATTR_GENERIC, EMAIL_DOMAIN_GENERIC, parse_generic),
 ]
 

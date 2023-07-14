@@ -39,5 +39,4 @@ def parse_home_depot(email):
             })
 
 
-    _LOGGER.error({ "tracking_numbers" : tracking_numbers})
     return tracking_numbers

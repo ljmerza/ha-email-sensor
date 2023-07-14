@@ -23,6 +23,7 @@ Supported Emails
 - Groupon
 - Guitar Center
 - Litter Robot
+- Lowes
 - Manta Sleep
 - Monoprice
 - NewEgg
