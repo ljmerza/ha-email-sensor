@@ -10,34 +10,61 @@ ATTR_AMAZON_DE = 'amazon_de'
 EMAIL_DOMAIN_AMAZON_DE = 'amazon.de'
 
 def parse_amazon_de(email):
-    """Parse Amazon tracking numbers."""
+    """Parse Amazon.de tracking numbers."""
     tracking_numbers = []
  
     soup = BeautifulSoup(email[EMAIL_ATTR_BODY], 'html.parser')
 
-    # see if it's an shipped order email
-    order_number_match = re.search('Order: #(.*?)\n', email[EMAIL_ATTR_BODY])
+    # German order number patterns
+    order_number_match = re.search(r'Order: #(.*?)\n', email[EMAIL_ATTR_BODY])
     if not order_number_match:
-        order_number_match = re.search('Your Amazon.de order of (.*?) has been dispatched!', email[EMAIL_ATTR_SUBJECT])
+        order_number_match = re.search(r'Bestellnr\.\s*(.*?)\s', email[EMAIL_ATTR_BODY])
     if not order_number_match:
-        return tracking_numbers
+        order_number_match = re.search(r'Bestellung\s*(.*?)\s', email[EMAIL_ATTR_BODY])
+    if not order_number_match:
+        # Check subject for German patterns
+        order_number_match = re.search(r'Bestellung\s*(.*?)\s', email[EMAIL_ATTR_SUBJECT])
+    if not order_number_match:
+        order_number_match = re.search(r'Bestellnr\.\s*(.*?)\s', email[EMAIL_ATTR_SUBJECT])
+    if not order_number_match:
+        # Check for order ID in URLs
+        order_number_match = re.search(r'orderId=([^&]+)', email[EMAIL_ATTR_BODY])
+    if not order_number_match:
+        # Check for shipment ID
+        order_number_match = re.search(r'shipmentId=([^&]+)', email[EMAIL_ATTR_BODY])
 
-    order_number = order_number_match.group(1)
-
-    # find the link that has 'track your package' text
-    linkElements = soup.find_all('a')
-    for linkElement in linkElements:
-        if not re.search(r'track your package', linkElement.text, re.IGNORECASE):
-            continue
+    if order_number_match:
+        order_number = order_number_match.group(1).strip()
         
-        # if found we no get url and check for duplicates
-        link = linkElement.get('href')
+        # Find tracking links (German and English)
+        linkElements = soup.find_all('a')
+        tracking_link = None
+        
+        for linkElement in linkElements:
+            link_text = linkElement.text.lower()
+            if any(keyword in link_text for keyword in ['track', 'verfolgen', 'paket verfolgen', 'lieferung verfolgen']):
+                tracking_link = linkElement.get('href')
+                break
+        
+        # If no specific tracking link found, look for any Amazon tracking URL
+        if not tracking_link:
+            for linkElement in linkElements:
+                href = linkElement.get('href', '')
+                if 'amazon.de' in href and ('track' in href or 'progress-tracker' in href):
+                    tracking_link = href
+                    break
 
-        # make sure we dont have dupes
-        order_numbers = list(map(lambda x: x['tracking_number'], tracking_numbers))
+        # Make sure we don't have duplicates
+        order_numbers = []
+        for item in tracking_numbers:
+            if isinstance(item, dict):
+                order_numbers.append(item.get('tracking_number', ''))
+            else:
+                order_numbers.append(item)
+                
         if order_number not in order_numbers:
             tracking_numbers.append({
-                'link': link,
+                'link': tracking_link or f'https://www.amazon.de/gp/your-account/order-history',
                 'tracking_number': order_number
             })
 

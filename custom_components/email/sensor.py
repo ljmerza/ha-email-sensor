@@ -29,6 +29,7 @@ from .parsers.rockauto import ATTR_ROCKAUTO, EMAIL_DOMAIN_ROCKAUTO, parse_rockau
 from .parsers.bh_photo import ATTR_BH_PHOTO, EMAIL_DOMAIN_BH_PHOTO, parse_bh_photo
 from .parsers.ebay import ATTR_EBAY, EMAIL_DOMAIN_EBAY, parse_ebay
 from .parsers.dhl import ATTR_DHL, EMAIL_DOMAIN_DHL, parse_dhl
+from .parsers.hermes import ATTR_HERMES, EMAIL_DOMAIN_HERMES, parse_hermes
 from .parsers.hue import ATTR_HUE, EMAIL_DOMAIN_HUE, parse_hue
 from .parsers.google_express import ATTR_GOOGLE_EXPRESS, EMAIL_DOMAIN_GOOGLE_EXPRESS, parse_google_express
 from .parsers.western_digital import ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital
@@ -80,6 +81,7 @@ parsers = [
     (ATTR_BH_PHOTO, EMAIL_DOMAIN_BH_PHOTO, parse_bh_photo),
     (ATTR_EBAY, EMAIL_DOMAIN_EBAY, parse_ebay),
     (ATTR_DHL, EMAIL_DOMAIN_DHL, parse_dhl),
+    (ATTR_HERMES, EMAIL_DOMAIN_HERMES, parse_hermes),
     (ATTR_HUE, EMAIL_DOMAIN_HUE, parse_hue),
     (ATTR_GOOGLE_EXPRESS, EMAIL_DOMAIN_GOOGLE_EXPRESS, parse_google_express),
     (ATTR_WESTERN_DIGITAL, EMAIL_DOMAIN_WESTERN_DIGITAL, parse_western_digital),
@@ -137,7 +139,10 @@ TRACKING_NUMBER_URLS = {
   'ups': "https://www.ups.com/track?loc=en_US&tracknum=",
   'usps': "https://tools.usps.com/go/TrackConfirmAction?tLabels=",
   'fedex': "https://www.fedex.com/apps/fedextrack/?tracknumbers=",
-  'dhl': 'https://www.logistics.dhl/us-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=',
+  'dhl': 'https://www.dhl.de/de/privatkunden/pakete-verfolgen.html?lang=de&idc=',
+  'hermes': 'https://www.myhermes.de/versand/verfolgen.html?trackingNumber=',
+  'gls': 'https://gls-group.eu/GROUP/de/parcel-tracking?match=',
+  'dpd': 'https://tracking.dpd.de/status/de_DE/parcel/',
   'swiss_post': 'https://www.swisspost.ch/track?formattedParcelCodes=',
   'unknown': 'https://www.google.com/search?q=',
 }
@@ -205,6 +210,9 @@ def find_carrier(tracking_number, email_domain):
     elif email_domain == EMAIL_DOMAIN_SWISS_POST:
         link = TRACKING_NUMBER_URLS["swiss_post"]
         carrier = "Swiss Post"
+    elif email_domain == EMAIL_DOMAIN_HERMES:
+        link = TRACKING_NUMBER_URLS["hermes"]
+        carrier = "Hermes"
     
     # regex tracking number
     elif re.search(usps_regex, tracking_number) != None:
@@ -216,6 +224,13 @@ def find_carrier(tracking_number, email_domain):
     elif re.search(fedex_regex, tracking_number) != None:
         link = TRACKING_NUMBER_URLS["fedex"]
         carrier = 'FedEx'
+    elif re.search(r'^DE[0-9]{10,}$', tracking_number) != None:
+        link = TRACKING_NUMBER_URLS["dhl"]
+        carrier = 'DHL'
+    elif re.search(r'^[0-9]{11,20}$', tracking_number) != None:
+        # Could be Hermes, GLS, or DPD - default to Hermes
+        link = TRACKING_NUMBER_URLS["hermes"]
+        carrier = 'Hermes'
         
     # try one more time
     else:
